@@ -1,11 +1,4 @@
 
-    //只整理部分答案，课件上没有
-    //太深入的标记later！！
-    //稳定交付，
-        test1.p16-p35 30min -- 20p/30min -- one page needs 2min at least 
-        test2.
-    //750+....4 days
-
     from tao
         fault error failure ok
         Rx ok
@@ -143,7 +136,7 @@
                 some example to this ? p39 roughly
                 we should not use integers comes from users directly.....
             MUST belief
-                *summ. typical error? 
+                *summ. typical error?  -xxx
                     pointer 
                         use after free
                         check then use/ use then check...
@@ -181,7 +174,7 @@
                 an other way to rank snippets that we found? p103 
                     heuristic? see how often?...
                 an other example, use in subfunction! worst bug case? short explain p108 ??
-            check “A() MAY BE FOLLOWED BY B()” Rule? p110 algo x3 p91 
+            check “A() MAY BE FOLLOWED BY B()” Rule? p110 algo x3 p91  -xxx
             the key idea of 'code beliefs'? -ans
             what to use for static analysis? template? algo? p113 
         ppt-5--approach4 'totally random'
@@ -190,7 +183,7 @@
             compared to Ramdom testing 
             problem with random testing 
             what is testing coverage/depth ? ==
-            anatomy of a testing system p9 x3 
+            anatomy of a testing system p9 x3 -xxx
             anatomy of Ramdom tester... p9 
             FUZZER’S DATA PRODUCTION method? p11 x2 + p12-14 x3x2 hh large
             what is Evolutionary fuzzing p14  
@@ -198,7 +191,7 @@
                 rank them 
             from the data Generator to SUT? how to transafer data? x4 p17
             what about monitoring sys.? p20  
-            Fuzzing workflow p21 x5
+            Fuzzing workflow p21 x5 after fuzzing? 
             why monitoring? detect what? 
             how to deal with Long testing time when using fuzzing? p22 x1 ==
             ---
@@ -252,9 +245,9 @@
                 VSEF? roughly p33 p34 
                 paper TAINT-BASED VSEF FILTER GENERATION later 
                 can have FALSE POSITIVE and false negatives ? how to deal with ? p39 
-                advantages of taint-based VSEF (when compared to Valgrind) x3 p44 
+                advantages of taint-based VSEF (when compared to Valgrind) x3 p44 -xxx
                 success criteria of the VSEF sys.? x2 p43 
-            TaintCheck: TaintSeed, TaintTrack, TaintAssert? p46 
+            TaintCheck: TaintSeed, TaintTrack, TaintAssert? p46 -xxx
             Advantages of static vs. dynamic taint analysis
             Coarse vs. precise tainting
             Sting: How to efficiently detect and prevent the spreading of   worms
@@ -262,29 +255,31 @@
                 Filter based on execution trace rather than on input
         ppt-7--highlevbugs(heisenbug)-MECHANISMS1
             why there are bugs still?
-            the def of robust
+            the def of robust -xxx
             sys. architecture p7 
             diff. bet. robustness and software fault tolerance p10 
             what is the reason of resource depletion? lack of res.?
             resource failures is kind of robustness issue? 
-            how to measure robustness? p14  ==
+            how to measure robustness? p13  ==
             types of bugs? x3 their examples?x4  p18
             what kind of bugs are difficult to recognize? roughly
             what may behind random effect? 
             for non-reproducible fault, what approach can we use?  highlev x8..
-            compare HEISENBUGS and BOHRBUGS? x2 
+            compare HEISENBUGS and BOHRBUGS? x2 -xxx
             the idea of process pair with pic p22 -ans 
             what is supervisord script used for? 
             supervisord architecture-- similar to program state graph p30
             still, we have problems even Thorough we use supervisord script to help us restart 
                 how to solve this problem? x2 or their combination // p31 + p35 
                 ->the architecture of it! p35 
+            combined approach, ultimate solution! p35 -xxx
             service states -- 
             what to query when watching supervisord? x2 p33 
             ---
             in gracefully degradation, we can return partial or wrong result? 
                 what we should do to prevent that? 
                 the idea? p37 
+                degeneration
             --- 
             selective retry, the idea? 
             HIERARCHICAL retry, what is that?
@@ -506,13 +501,13 @@
                         env warpers? x5 
                     proxy can also help this process 
                     the functionality of control unit in rx architecture 
-                env. changes and the types of bugs * explain the table 
+                env. changes and the types of bugs * explain the table -xxx
                 bug types can be solved by RX ? p59 .... roughly x4...
                 recovery performance? explain the pic.. p62
                 minor performance impact of RX 
                 how to Improve the performance of RX? 
                     the order of env. changes does metter x3 we have to optimize it p65 
-                Challenges of RX x2 p66 ==
+                Challenges of RX p66 == -xxx
                 it is about surviving software faults....
                 provides more feedbacks for bug analysis (diagnoses)
                 typical imp. , with diff. env. settings 

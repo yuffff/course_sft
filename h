@@ -70,8 +70,9 @@
         with git tool, we can use branch for ? x3 p8 
         how to perform fault injection during testing and production? 
 
-
         ...
     inverse
-        what can we use toxxx 
+        //what can we use toxxx 
+        to increase online robustness? x4big s8p2 partII of the course 
+        given a code, how to test it? unit test? checking? partI of the slide
         classify the kind of software faults of existing programs
