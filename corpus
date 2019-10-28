@@ -1,0 +1,3307 @@
+MICROSERVICES
+Prof. Dr. Christof Fetzer / Dr. André Martin, TU Dresden
+1
+HOW SHOULD WE BUILD SERVICES?
+➤ Over the years we have learned better ways of how to build
+dependable services!
+➤ services that are available, timely and guarantee integrity
+and confidentiality
+➤ Microservices are a modern way of building dependable
+services!
+2
+CHALLENGES?
+➤ Large code base
+➤ Large development teams
+➤ diverse backgrounds
+➤ Continuously adding new
+features:
+➤ Continuous delivery
+➤ Too little time to test
+➤ new features are deployed asap
+➤ Large number of machines
+➤ DevOps: need to keep your
+services running
+http://cdn2.hubspot.net/hub/386909/file-2345527408-jpg/3_of_the_Biggest_Challenges_Facing_Financial_Executives_Today.jpg
+3
+MONOLITHIC SOFTWARE
+➤ Software made of one piece!
+➤ monolithic = „large,
+powerful, indivisible, and slow
+to change (system)“
+➤ Note:
+➤ these days sometimes used
+as an insult
+https://commons.wikimedia.org/wiki/File:St_Breock_Down_Monolith_-_Standing_Stone_-_geograph.org.uk_-_109844.jpg
+4
+DIFFERENT KINDS OF MONOLITHIC SOFTWARE
+➤ What exactly is monolithic software?
+➤ Different aspects:
+➤ Monolithic Code Base
+➤ is compiled together and produces a single artifact
+➤ Monolithic Deployment
+➤ all of the code is shipped/deployed at the same time.
+➤ Monolithic Runtime
+➤ a single application or process performing the work
+(see http://www.codingthearchitecture.com/2014/11/19/what_is_a_monolith.html ) 5
+MONOLITHIC CODE BASE
+➤ Advantage:
+➤ simple structure
+➤ Disadvantage:
+➤ changes need to be
+coordinated
+➤ „basically“ only one
+language
+(see http://www.codingthearchitecture.com/2014/11/19/what_is_a_monolith.html ) 6
+EXAMPLE
+➤ Consider
+➤ Package B’s interface has
+changed
+➤ requires updates of packages A
+and D
+➤ What if package E
+➤ is currently changed too?
+➤ requires changes of D
+➤ Approach:
+➤ update D for changes of B
+➤ integrate later with updates of
+D and E
+(see http://www.codingthearchitecture.com/2014/11/19/what_is_a_monolith.html )
+Problem:
+we need to deal with dependencies of
+packages
+and synchronize the updates of the
+packages
+7
+MANAGING DEPENDENCIES
+➤ Modern source code control
+systems like GIT provide branches
+➤ Use a branch for
+➤ releases
+➤ bug fixes
+➤ new features
+➤ Advantages:
+➤ decouple code changes
+➤ Disadvantage:
+➤ still lots of dependencies - e.g.,
+still need to perform the API
+changes in sync
+➤ need to rebased feature branches
+Time
+release
+develop branches hotfixes master feature
+branches
+Feature for
+future
+release
+Tag
+1.0
+Major
+feature for
+next
+release
+From this point on, “next
+release” means the
+release after 1.0
+Severe
+bug fixed
+for
+production:
+hotfix 0.2
+Bugfixes from
+rel. branch
+may be
+continuously
+merged back
+into develop
+Tag
+0.1
+Tag
+0.2
+Incorporate
+bugfix in
+develop
+Only
+bugfixes!
+Start of release
+branch for
+1.0
+(CC) 8
+KEEP HISTORY UNDERSTANDABLE
+➤ Feature branch:
+➤ combine all commits to one
+commit (squash)
+➤ before merging into develop
+branch
+Time
+release
+develop branches hotfixes master feature
+branches
+Feature for
+future
+release
+Tag
+1.0
+Major
+feature for
+next
+release
+From this point on, “next
+release” means the
+release after 1.0
+Severe
+bug fixed
+for
+production:
+hotfix 0.2
+Bugfixes from
+rel. branch
+may be
+continuously
+merged back
+into develop
+Tag
+0.1
+Tag
+0.2
+Incorporate
+bugfix in
+develop
+Only
+bugfixes!
+Start of release
+branch for
+1.0
+(CC) 9
+one
+commit
+REBASE FREQUENTLY
+➤ Feature branch:
+➤ combine all commits to one
+commit (squash)
+➤ before merging into develop
+branch
+➤ Rebase:
+➤ keep up with development
+branch by rebasing frequently
+(daily)
+Time
+release
+develop branches hotfixes master feature
+branches
+Feature for
+future
+release
+Tag
+1.0
+Major
+feature for
+next
+release
+From this point on, “next
+release” means the
+release after 1.0
+Severe
+bug fixed
+for
+production:
+hotfix 0.2
+Bugfixes from
+rel. branch
+may be
+continuously
+merged back
+into develop
+Tag
+0.1
+Tag
+0.2
+Incorporate
+bugfix in
+develop
+Only
+bugfixes!
+Start of release
+branch for
+1.0
+(CC) 10
+one
+commit
+NON-MONOLITHIC CODE BASE
+Approach:
+✍ split code bases in
+„modules“
+✍ decouples code components
+11
+DECOUPLING CODE
+Note:
+✍ package A can use new version of B
+✍ (while D can still use old version of B)
+12
+„latest version“
+DECOUPLING CODE
+13
+„newest version“
+„older version“
+Note:
+✍ we decouple the progress of D
+from B & A
+EXAMPLE: PYTHON
+➤ Python package manager: pip
+➤ installs packages from a repository
+➤ all packages are versioned
+➤ For package A:
+➤ pin install package_B # installs latest version
+➤ For package D:
+➤ pip install package_B==1.1.2 # install specific version
+14
+NOTES
+➤ Personal preference:
+➤ use git for development of packages to keep track of
+changes
+➤ simple master branch for simple packages (single
+developer, no concurrent feature implementations)
+➤ multiple branches if lots of concurrent modifications
+➤ clients of packages use a given version:
+➤ imported via pip (or package manager)
+15
+MONOLITHIC DEPLOYMENT
+(see http://www.codingthearchitecture.com/2014/11/19/what_is_a_monolith.html ) 16
+MONOLITHIC DEPLOYMENT: ADVANTAGES
+➤ No partial updates: all or nothing
+➤ Notes:
+➤ Some dynamic deployment frameworks (e.g., Chef) might
+fail with partial updates
+➤ Not always clear how to recover from this automatically
+(often requires manual fixes)
+17
+POTENTIAL PROBLEM: SCALABILITY
+http://martinfowler.com/articles/microservices.html
+18
+Problem:
+might be inefficient if only some
+packages
+would need to be replicated.
+MORE DISADVANTAGES
+➤ Simple update of some jar file
+➤ requires complete push of all software
+➤ Pushing new version
+➤ might require shutting down services that run now
+➤ (e.g., files are locked while binary runs)
+19
+MONOLITHIC RUNTIME
+http://microservices.io/patterns/monolithic.html
+20
+RECALL
+➤ Different aspects:
+➤ Monolithic Code Base
+➤ is compiled together and produces a single artifact
+➤ Monolithic Deployment
+➤ all of the code is shipped/deployed at the same time.
+➤ Monolithic Runtime
+➤ a single application or process performing the work
+(see http://www.codingthearchitecture.com/2014/11/19/what_is_a_monolith.html ) 21
+MICROSERVICES
+http://martinfowler.com/articles/microservices.html
+22
+URL URL URL URL
+DEFINITION
+➤ Microservices are small, autonomous services that work
+together.
+➤ Focus on doing one thing well!
+23
+CODE BASE OF MICROSERVICES
+24
+URL URL URL URL
+➤ Each micro service could use
+➤ an independent code base
+➤ use even different languages
+➤ Reality:
+➤ we will reuse packages
+across microservices
+➤ However, each micro service:
+➤ could use different versions
+of packages
+➤ upgrade to latest version
+when it is convenient
+http://martinfowler.com/articles/microservices.html
+package A
+version 2
+package A
+version 3
+MICROSERVICE VERSIONING
+➤ Microservice available at some
+URL
+➤ Supports different versions:
+➤ versioned endpoints
+➤ multiple choices response
+➤ Example: versioned endpoints
+➤ myservice.org/v2/..
+➤ myservice.org/v3/..
+➤ Multiple choices response:
+➤ HTTP 300 response
+➤ return multiple choices
+25
+MICROSERVICE VERSIONING
+➤ Microservice available at some
+URL
+➤ Supports different versions:
+➤ versioned endpoints
+➤ multiple choices response
+➤ Example: versioned endpoints
+➤ myservice.org/v2/..
+➤ myservice.org/v3/..
+➤ Multiple choices response:
+➤ HTTP 300 response
+➤ return multiple choices myservice.org/v2/..
+myservice.org/v3/..
+26
+DEPLOYMENT
+27
+SCALABILITY OF MONOLITHIC SERVICES
+http://martinfowler.com/articles/microservices.html
+Load balancer
+28
+SCALABILITY
+http://martinfowler.com/articles/microservices.html 29
+SCALABILITY OF MICROSERVICES
+http://martinfowler.com/articles/microservices.html
+Load balancer Load balancer Load balancer
+30
+DEPLOYMENT: INDIVIDUAL SERVICES
+http://martinfowler.com/articles/microservices.html
+Load balancer Load balancer Load balancer
+31
+new version
+DEPLOYMENT: UPGRADE TO NEW VERSION - STEP BY STEP
+http://martinfowler.com/articles/microservices.html
+Load balancer Load balancer Load balancer
+32
+new version
+RUNTIME
+33
+RUNTIME
+(see http://www.codingthearchitecture.com/2014/11/19/what_is_a_monolith.html ) 34
+DECOUPLING
+➤ Tight coupling of components
+leads to dependencies
+➤ Decouple components to reduce
+dependencies
+➤ Facilitate greater independent
+development roadmaps of
+components!
+➤ Decoupling:
+➤ at multiple levels of abstraction:
+➤ code, teams
+➤ deployment
+➤ run-time
+https://www.drupalwatchdog.com/volume-4/issue-2/decoupling-drupal
+35
+HOW CAN WE DECOUPLE
+COMPONENTS?
+@ Runtime?
+36
+MIRCOREBOOTS
+➤ Summary:
+➤ components vary in MTTF (minutes to months)
+➤ components vary in MTTR (subseconds to 10s of seconds)
+➤ reboot only components that have failed to reduce
+downtime
+➤ reboot of component A, we might need to reboot components
+that depend upon A (i.e., will fail after a reboot of A)
+➤ How can we reduce these runtime dependencies?
+37
+TECHNIQUES TO FACILITATE MICROREBOOTS
+➤ Separation of data and component recovery:
+➤ Data and component must survive across failures
+➤ Data recovery:
+➤ All data that has to persist is stored in persistent storage
+(e.g., database, key/value store)
+➤ Component recovery:
+➤ rejuvenation
+➤ automatic restart after crash
+38
+DECOUPLING
+➤ Need loose coupling of components
+➤ Example of tight coupling:
+➤ External pointers / references / handles to within a
+component
+➤ Loose coupling:
+➤ Use registry to locate / access component
+➤ Use publish / subscribe paradigm (message bus) to decouple
+producer and consumer
+39
+RETRYABLE REQUESTS
+➤ Idempotent:
+➤ Callers use timeouts:
+➤ When timeout expires, retry failed call
+➤ Calls during rejuvenation:
+➤ Return of an exception (with new timeout)
+➤ For non-idempotent functions:
+➤ Need to cope with these using rollback / compensation
+actions...
+40
+LEASED RESOURCES
+➤ Problem:
+➤ Rejuvenation of component might leak resources
+➤ Approach:
+➤ All resources have a lease time
+➤ Component needs to extend lease if it wants to keep
+resource
+➤ Crash/rejuvenation:
+➤ Leases will expire, i.e., resources will be reclaimed
+41
+SUMMARY
+➤ Microreboots might improve the quality of service
+➤ Need to know which component to rejuvenate
+➤ structure of reboot can improve reboot time
+42
+WHY TO CARE ABOUT DECOUPLING?
+➤ Even without micro reboots
+➤ services will fail
+➤ we will need to restart failed services!
+43
+FAULT TOLERANCE
+For Microservices
+44
+LOCAL RESTARTS
+45
+➤ When micro service fails,
+restart service locally
+➤ Often we might use a fail-fast
+design. Any error you cannot
+deal with
+➤ log error,
+➤ crash, and
+➤ restart automatically.
+restart restart restart restart
+(e.g., using supervisord)
+http://martinfowler.com/articles/microservices.html
+REJUVENATION
+46
+➤ Rejuvenation by periodically exiting service
+with an error code
+➤ automatic restart triggered
+➤ Ensure transparent restart:
+➤ tell load balancer to stop sending requests
+➤ restart
+➤ tell load balancer that service is available
+again
+➤ Need to avoid services reboot at same time:
+➤ randomize service rejuvenation
+Load balancer
+REMOTE RESTARTS
+http://martinfowler.com/articles/microservices.html
+recovery
+manager
+periodic checks &
+restart
+restart on failure
+on failure
+47
+restart on remote machine
+if local restart fails!
+failed
+notifications (e.g., supervisord)
+LOAD BALANCER RESTARTS
+http://martinfowler.com/articles/microservices.html
+Load balancer Load balancer Load balancer
+restart
+on failure
+48
+RESTART OF LOAD BALANCERS
+http://martinfowler.com/articles/microservices.html
+Load balancer Load balancer Load balancer
+49
+recovery
+manager
+Load balancer
+failed
+PROBLEM
+➤ Clients communicate with IP
+address of load balancer
+➤ New load balancer could
+➤ take over IP address of old
+server
+➤ use new IP address - clients
+need to resolve URL
+50
+FIXED „SERVICE IP“ ADDRESS
+recovery
+manager
+failed Load balancer
+Service IP
+client
+Load balancer
+Service IP
+start
+51
+FIXED „URL“
+recovery
+manager
+failed Load balancer
+IP1
+client
+Load balancer
+IP2
+start
+DNS: IP1
+query
+periodically
+52
+MICROSERVICES
+…are Distributed Systems
+53
+FALLACIES OF DISTRIBUTED COMPUTING
+➤ We need to address the fallacities of distributed systems!
+➤ we need to use the right patterns to address these
+➤ we need to test that system works
+➤ we need to perform fault injection during testing and
+production
+54
+SUMMARY / TAKE AWAY
+➤ Monolithic aspects
+➤ Code base / development / runtime
+➤ How to apply decoupling of those aspects
+➤ Deployment & runtime aspects of microservices
+➤ How to apply fault tolerance for microservices
+55
+STABILITY PATTERNS AND
+ANTI-PATTERNS -Things to avoidProf. Dr. Christof Fetzer / Dr. André Martin, TU Dresden
+1
+MICROSERVICES
+Are Distributed Systems
+2
+FALLACIES OF DISTRIBUTED COMPUTING
+➤ The network is reliable.
+➤ we might wait for a reply but no reply will be received
+➤ Latency is zero.
+➤ substantial performance hit from local calls
+➤ Bandwidth is infinite.
+➤ limited bandwidth in comparison to in memory communication
+➤ The network is secure.
+➤ network snooping is common these days.
+3
+FALLACIES OF DISTRIBUTED COMPUTING
+➤ Topology doesn't change.
+➤ IP addresses might change, number of hops, participants
+➤ There is one administrator.
+➤ multiple administrative domains
+➤ Transport cost is zero.
+➤ in cloud, we might pay by the byte
+➤ The network is homogeneous.
+➤ different speeds, delays, reliability
+4
+ROADMAP
+5
+SO FAR…
+➤ We need to accept that we need to deal with bugs:
+➤ we looked at several approaches to deal with bugs during
+runtime
+➤ However:
+➤ not all approaches are effective.
+➤ Today:
+➤ focus on microservices which are distributed applications
+6
+ANTI-PATTERN
+➤ Definition:
+➤ „In software engineering, an anti-pattern is a pattern [...] that
+may be commonly used but is ineffective and/or
+counterproductive in practice“.
+(wikipedia.org)
+7
+ORIGIN OF ANTI-PATTERNS?
+➤ Experience:
+➤ people performing a post mortem analysis to figure out the
+cause of a system failure
+8
+INTEGRATION POINTS
+➤ Integrations are the #1 risk to your system stability
+➤ Integration points:
+➤ sockets, remote procedure calls
+➤ e.g., REST interfaces
+9
+EXAMPLE
+➤ Sympton:
+➤ database hangs early
+in the morning
+application
+server
+database
+server
+tcp
+10
+FIREWALL & DB INTERACTION
+➤ Sympton:
+➤ database hangs early in the
+morning
+➤ firewall drops connection (after
+some inactivity period):
+➤ tcp connection pool - LIFO
+➤ 5am: 2nd connection is needed
+➤ application hangs (no acks from
+DB server)
+➤ tcp retry timeout: 30 minutes
+application
+server
+database
+server
+firewall
+approach: periodic pings to keep connections alive
+11
+EXAMPLE 2
+➤ Sympton:
+➤ database queries fail from time to time
+➤ REST service restarts
+REST
+service
+database
+server
+tcp
+12
+EXAMPLE 2
+➤ More details:
+➤ database queries fail from time to
+time
+➤ long inactivity of tcp connection
+from REST service:
+➤ database closes connection
+➤ REST services restarts (failfast)
+REST
+service
+database
+server
+tcp
+13
+POST MORTEM
+➤ During testing:
+➤ short rejuvenation time out (1 hour): no issue with stale
+DB connections
+➤ During production (first approach):
+➤ 12 hour rejuvenation - DB connection become stale
+➤ fail-fast on DB exception - ok since application level retries
+but shows up on monitoring of service
+➤ Second Approach: reestablish DB connection on exception.
+Fail-fast if cannot re-establish connection.
+14
+EXPECTED ERRORS
+➤ Expected Errors:
+➤ TCP connection refused
+➤ HTTP error code
+➤ Error message in XML response
+➤ ...
+15
+LESS EXPECTED ERRORS
+➤ Less expected:
+➤ connection established but no data
+➤ window full (i.e., sender blocked)
+➤ very very slow data rate
+➤ no acks from server (i.e., long client delays)
+➤ wrong protocol on port (SNMP vs. HTTP)
+➤ ....
+16
+AMAZON WEB SERVICES (AWS)
+➤ 100s of (micro-)services
+➤ e.g., recommendation, fraud detection, etc.
+➤ each exposed by API
+➤ Platform consists
+➤ 10,000s of computers
+➤ spread across multiple data centers
+17
+18
+AWS ARCHITECTURE
+ANTIPATTERN: CASCADING FAILURES
+➤ Assumption: trust that tiers do not go down!
+➤ Observation:
+➤ failures move vertically across tiers
+➤ failure in one system causing failure of calling system
+19
+EXAMPLE
+➤ Consider:
+➤ Ci requests service of service
+Si
+➤ crash of servers (or LBs),
+leads to blocking of Ci
+➤ e.g., EJB over RMI has no
+timeouts - all threads are
+blocked
+C1 ... Cn
+LB LB
+S1 S2 S3 S4
+0% 0% 0% 0%
+20
+EXAMPLE
+➤ Consider:
+➤ Ci requests service of service
+Si
+➤ crash of servers (or LBs),
+leads to blocking of Ci
+➤ e.g., EJB over RMI has no
+timeouts - all threads are
+blocked
+C1 ... Cn
+LB LB
+S1 S2 S3 S4
+0% 0% 0% 0%
+e.g. all threads
+are frozen
+21
+OBJECTIVE
+➤ One needs to expect
+➤ that a whole tier stops responding at some point
+➤ Objective:
+➤ one needs to prevent that the failure of one tiers propagates
+to another tier
+22
+PATTERNS
+➤ Think about damage control!
+➤ Look at resource pools - they get exhausted when things fail in
+lower layers
+➤ Patterns:
+➤ Timeout
+➤ Circuit Breaker
+➤ Decouple clients via proxy / load balancer
+23
+TIMEOUT PATTERN
+issued
+call issued:
+setTimeout
+(request)
+call returns
+ok
+throw
+timeout
+timeout
+before
+call
+24
+PROBLEM?
+➤ Consider: service A sends requests to service B:
+➤ when service B fails, A can tolerate B’s failure by using a
+default value
+➤ What if we have 100s, 1000s, 10000s concurrent requests?
+➤ we see massive slow down of A (increased latency, reduced
+throughput)
+25
+PATTERNS
+➤ Use timeouts
+➤ Circuit breaker
+➤ Use decoupling middleware / services
+26
+CIRCUIT BREAKER PATTERN
+➤ Problem:
+➤ calls fails repeatedly and each call needs a substantial time to
+fail
+➤ Circuit Breaker
+➤ a „shim“ between a caller and a callee
+➤ returns an exception - instead of calling callee - if callee has
+recently thrown many exceptions
+caller callee
+27
+CIRCUIT BREAKER STATE TRANSITIONS
+open
+exception on call && (no_errors < threshold):
+no_errors++, setTimeout(lastFailure)
+lastFailure timeout:
+no_errors = 0
+closed
+exception on call &&
+no_errors >= threshold:
+setTimeout(noFailure)
+return CircuitClosed exception
+instead of calling callee
+noFailure timeout:
+setTimeout(probation)
+exception on call
+probation timeout
+28
+half
+open
+PATTERNS
+➤ Use timeouts
+➤ Circuit breaker
+➤ Use decoupling middleware / services
+29
+USE DECOUPLING SERVICES
+➤ Proxy approach:
+➤ sets timeout for client and/or
+server to provide data
+➤ limits client inactivity periods
+➤ limits connection timeout
+➤ checks request/response format
+➤ …
+REST
+client
+http(s)
+REST
+service
+proxy
+http(s)
+30
+USE DECOUPLING SERVICES
+➤ Proxy approach:
+➤ load balancing between
+servers
+➤ on misbehaving server,
+switches to alternative
+➤ if no alive server,
+returns error
+immediately
+REST
+client
+http(s)
+REST
+server
+proxy
+http(s)
+REST
+server
+http(s)
+…
+31
+EXAMPLE: HAPROXY
+➤ Provides a very large configuration space:
+➤ max. number of connections per server & total number of
+connections
+➤ limit number of new http/https sessions per second
+➤ timeouts
+➤ to establish a connection
+➤ for a server to respond
+➤ inactivity timeout of client
+➤ …
+32
+POTENTIAL PROBLEMS
+➤ Problems:
+➤ need to ensure that proxy is
+always available
+➤ automatic restarted on crash
+➤ replaced by a
+new one on
+hardware failure
+➤ network failure?!?
+REST
+client
+http(s)
+REST
+server
+proxy
+http(s)
+REST
+server
+http(s)
+…
+33
+RECOMMENDATION
+➤ Use simple timeout on client side
+➤ Do not use circuit breaker
+➤ Use proxy that supports fail-over
+➤ returns an error immediately if no server is available
+➤ proxy is automatically restarted on failure
+➤ same machine or different machine
+➤ always, have a default proxy that would return an error
+34
+ANTIPATTERN: CHAIN REACTION
+➤ Assumption:
+➤ servers in a tier are decoupled
+➤ Failures propagate horizontally across a tier
+➤ load related problem in component (= server)
+➤ crash of a component leads to crash of other components
+35
+EXAMPLE
+➤ Consider:
+➤ clients C1 … Cn
+➤ two load balancers /
+proxies
+➤ servers S1 … S4:
+➤ even load balancing
+C1 ... Cn
+LB LB
+S1 S2 S3 S4
+25% 25% 25% 25%
+of total load 36
+EXAMPLE
+➤ Consider:
+➤ S4 goes down
+➤ S1-S3 load up: from 25%
+to 33% of total load (33%
+increase)
+➤ each one dies faster
+➤ horizontal failure
+propagation
+C1 ... Cn
+LB LB
+S1 S2 S3 S4
+33% 33% 33% 0%
+of total load 37
+EXAMPLE
+➤ Consider:
+➤ S2 & S4 down
+➤ S1/S3 load up: from
+25% to 50% of total
+load (100% increase)
+➤ each one dies faster
+➤ horizontal failure
+propagation
+C1 ... Cn
+LB LB
+S1 S2 S3 S4
+50% 0% 50% 0%
+of total load 38
+EXAMPLE
+➤ Consider:
+➤ S4, S2, S3 down
+➤ S1 load up: from 25% to
+100% of total load
+(300% increase)
+➤ each one dies faster
+➤ horizontal failure
+propagation
+C1 ... Cn
+LB LB
+S1 S2 S3 S4
+100% 0% 0% 0%
+of total load
+39
+EXAMPLE
+➤ Final state:
+➤ S1-S4 down
+C1 ... Cn
+LB LB
+S1 S2 S3 S4
+0% 0% 0% 0%
+of total load
+40
+PATTERNS
+➤ Remove resource leaks
+➤ Autoscaling
+➤ Throttling
+➤ Bulkhead pattern
+41
+AUTOSCALING LOAD BALANCER
+➤ Load balancer detects
+failed server
+➤ spawns a new
+server
+C1 Cn
+LB LB
+S1 S2 S3 S4
+33% 33% 33% 0%
+of total load
+S4‘
+42
+AUTOSCALING LOAD BALANCER
+➤ Load balancer detects
+failed server
+➤ spawns a new server
+➤ distributes the load
+using the new server
+➤ load of servers down
+to original load
+C1 Cn
+LB LB
+S1 S2 S3 S4
+25% 25% 25% 0%
+of total load
+S4‘
+25%
+43
+THROTTLING
+➤ Consider:
+➤ S4 goes down
+➤ LB limits max. throughput
+per server:
+➤ max. number of
+connections
+➤ limit new connection rate
+➤ some requests are dropped
+in case server limits are
+reached
+C1 ... Cn
+LB LB
+S1 S2 S3 S4
+28% 28% 28% 0%
+of total load 44
+limit
+request
+rate
+THROTTLING & AUTOSCALING
+➤ Combined approach:
+➤ limits max. request rate per server
+➤ spawns a new server before reaching max. request rate per
+server
+➤ stops a servers when a minimum request rate per server is
+reached
+45
+BULKHEADS
+http://skife.org/architecture/fault-tolerance/2009/12/31/bulkheads.html
+bulkhead
+46
+BULKHEAD PATTERN
+http://skife.org/architecture/fault-tolerance/2009/12/31/bulkheads.html
+47
+BULKHEAD PATTERN
+➤ Partition system:
+➤ stops propagation of
+failures to other
+partitions
+➤ i.e., can tolerate failure
+in one partition
+C1 ... Cn
+LB LB
+S1 S2 S3 S4
+Ci Ci+1
+48
+ANITPATTERN: BLOCKED THREADS
+➤ Most common „crash“ of containers:
+➤ all threads are blocked
+➤ Very difficult to test for
+➤ mostly under high load and difficult to reproduce
+49
+APPROACH
+➤ Synchronized blocks
+➤ don‘t use blocking calls in synchronized blocks - otherwise,
+threads can pile up
+➤ Don‘t use your own resource pools
+➤ need to be heavily tested code
+➤ Patterns:
+➤ Use timeout pattern
+➤ Use reactive programming (events instead of threads)
+50
+DENIAL OF SERVICE ATTACKS
+➤ Good marketing can kill your system
+➤ self-induced „Slashdot“ effect
+51
+APPROACH
+➤ Techniques:
+➤ Use static „landing“ page
+➤ only second click reaches App server
+➤ Use light-weight version of page
+➤ Use elastic load balancer (in cloud)
+➤ Use user throttling (e.g., max. 1 request/sec)
+52
+LOAD BALANCER
+&
+REJUVENATION
+53
+REJUVENATION
+➤ To take care of resource
+leaks:
+➤ periodically restart
+server by failing over to
+another host or
+restarting service
+➤ set in configuration file
+➤ Server:
+➤ lets load balancer know
+that it goes down
+➤ no new requests
+C1 Cn
+LB LB
+S1 S2 S3 S4
+54
+REJUVENATION
+➤ As soon as all pending
+requests are processed,
+➤ S4 goes down
+➤ S1-S3 process all
+requests
+C1 Cn
+LB LB
+S1 S2 S3 S4
+55
+REJUVENATION
+➤ Server is automatically
+restarted
+➤ Load balancer will
+detect this
+➤ assign new requests
+to S4’
+C1 Cn
+LB LB
+S1 S2 S3 S4‘
+56
+IMPLEMENTATION
+➤ Is haproxy API sufficiently powerful to perform this fail-over?
+➤ soft stop server (HA Proxy), i.e., stop backend server,
+check for outstanding requests, and then stop server
+➤ start new server
+➤ More efficient hand-over:
+➤ start alternative server first
+➤ after startup, enable backend of this server
+➤ „soft stop“ other server
+57
+SOME MORE
+PATTERNS…
+58
+PATTERN: CRASH!
+➤ Pattern: (a.k.a. fail-fast)
+➤ Any error you cannot deal with
+➤ log error, crash, and
+➤ restart automatically.
+➤ Tools for automatic restart
+➤ e.g., supervised (or upstart)
+59
+UPSTART
+➤ Utility to start services
+➤ on startup (on certain runlevel, ...)
+➤ Fault tolerance:
+➤ respawn, i.e., restart service after crash
+➤ respawn limit x y
+➤ at most x restarts within y seconds
+➤ limit resources in case of deterministic bugs
+60
+ARCHITECTURE
+➤ Netflix architecture:
+➤ a service consists of a group of VMs:
+➤ Amazon’s Auto Scaling Group (ASG).
+61
+WHY AUTO SCALING?
+➤ Many services have hourly, daily, or weekly load variations:
+http://highscalability.com/blog/2014/2/17/how-the-aolcom-architecture-evolved-to-99999-availability-8.html
+AOL.com
+2014
+62
+WEEKLY PATTERN
+http://highscalability.com/blog/2014/2/17/how-the-aolcom-architecture-evolved-to-99999-availability-8.html
+AOL.com
+2014
+63
+AUTOSCALING GROUP
+➤ In a cloud, one pays per hour:
+➤ to reduce cost of operation, adjust the number of VMs
+with the load of your service.
+➤ Example Policy:
+➤ average CPU utilization > 70%: add 3 instances
+➤ average CPU utilization < 10%: remove 3 instances
+➤ cool-down period - wait X seconds before performing
+next adjustment
+64
+IN PICTURES
+S1 S2 S3
+CPU utilization > 70%
+65
+autoscaling group
+ADD NEW INSTANCE
+S1 S2 S3
+autoscaling group
+CPU utilization > 70%
+S4 S5 S6
+66
+IF CPU UTILIZATION DROPS
+S1 S2 S3
+autoscaling group
+CPU utilization < 10%
+S4 S5 S6
+67
+… REMOVE INSTANCES
+68
+S1 S2 S3
+autoscaling group
+METRICS
+➤ Not only CPU utilization:
+➤ memory_free: the amount of free memory
+➤ memory_used: the amount of used memory
+➤ procs: the number of active processes
+➤ …
+69
+AUTOSCALING POLICY
+➤ User can define policies - includes:
+➤ minimum and maximum number of VMs
+➤ defines when to increase group size:
+➤ when some metric(s) satisfy a given condition
+➤ define when to decrease group size:
+➤ when some metric(s) satisfy a given condition
+70
+POLICY
+➤ Not easy to define a good policy:
+➤ ideally, one would like to keep the response time below a
+certain threshold - say, 100 ms
+➤ permit some outliers, say, 99% percentile response time <
+100ms
+➤ spawning a new instance, can take up to 1 minute
+71
+APPROACH?
+➤ Approach applied in practice:
+➤ use indirect metrics like CPU utilization to „predict“
+response time
+➤ scale up before one reach a response time problem
+➤ Problem:
+➤ CPU not always the bottleneck: network, disk, context
+switches, paging, …
+72
+ELASTIC LOAD BALANCER
+➤ AutoScaling Group can be combined with an elastic load
+balancer
+➤ to improve fault tolerance
+➤ by excluding slow or failed VMs
+➤ by load balancing across availability zones
+➤ to improve throughput - by adding parallel processing
+73
+ELASTIC LOAD BALANCER
+S1 S2 S3
+autoscaling group
+S4 S5 S6
+LB elastic load balancer
+balances the load
+between responsive
+instances
+user requests
+74
+ELASTIC LOAD BALANCER
+S1 S2 S3
+autoscaling group
+S4 S5 S6
+LB
+elastic
+load balancer
+elastic load balancer scales itself
+to handle traffic of autoscaling group
+LB
+75
+AVAILABILITY ZONES?
+➤ Availability zone: „a data center“
+➤ grouped into regions
+➤ within a region connected by low latency link
+http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html
+76
+AVAILABILITY ZONES
+77
+REGIONS
+➤ Each region is completely independent.
+➤ One can assign a routable IP address to a service
+➤ this IP address can be used within the availability zones of
+a region but not across the regions
+78
+BULKHEAD PATTERN
+S1 S2 S3
+autoscaling group in
+availability zone
+S4 S5 S6
+LB
+elastic
+load balancer
+IP address
+autoscaling group in
+availability zone
+LB LB LB
+79
+BULKHEAD PATTERN
+S1 S2 S3
+autoscaling group in
+availability zone
+S4 S5 S6
+LB
+elastic
+load balancer
+fail-over to other
+availability zone
+IP address
+autoscaling group in
+availability zone
+LB LB LB
+80
+BULKHEAD PATTERN ACROSS REGIONS
+➤ Improve availability and throughput by using DNS-based load
+balancing and fail-over
+elastic IP address 1
+autoscaling group
+in availability
+zone
+autoscaling group
+in availability
+zone
+elastic load
+balancer
+elastic load
+balancer
+autoscaling group
+in availability
+zone
+autoscaling group
+in availability
+zone
+elastic load
+balancer
+elastic load
+balancer
+elastic IP address 2
+DNS load balancer
+region 1 region 2
+81
+82
+FAULT
+INJECTION
+83
+MOTIVATION
+➤ How do I verify that my fault tolerance mechanisms actually
+work?
+84
+NETFLIX CHAOS MONKEY
+http://www.mobypicture.com/user/werner/view/9249882
+85
+CHAOS MONKEY
+➤ Netflix service
+➤ open source under Apache license
+➤ Terminates VM instance during operations
+➤ during normal office hours
+➤ rate is fixable (default 1 VM per day)
+86
+THAT SOUNDS CRAZY…
+➤ Motivation:
+➤ Failures happen, and they inevitably happen when least
+desired.
+➤ better find out when the operation team is working
+➤ make system more stable & improve confidence of fail-over
+mechanisms
+87
+SUMMARY
+➤ Many common anti-patterns
+➤ Cascading failures, Chain reaction, Blocked threads
+➤ And patterns to defend against them
+➤ Timeout
+➤ Circuit breaker
+➤ Decoupling via proxy/load balancer
+➤ Autoscaling
+➤ Throttling
+➤ Bulkhead pattern
+➤ Crash – fail fast
+➤ Defense requires some effort - there is no free lunch
+➤ However, one can try to improve availability, throughput and response
+time with those approaches
+88
+BASIC SFT MECHANISMS II
+Prof. Dr. Christof Fetzer / Dr. André Martin, TU Dresden
+1ROBUST PROGRAMMING MECHANISMS
+➤ Process Pairs
+➤ Graceful Degradation
+➤ Selective Retry
+➤ Checkpointing
+➤ State Scrubbing
+➤ Process Pools & Rejuvenation
+➤ Recovery Block
+➤ Microreboots
+➤ State Correction
+➤ ...
+Last lecture
+2ROBUST PROGRAMMING MECHANISMS
+➤ Process Pairs
+➤ Graceful Degradation
+➤ Selective Retry
+➤ Checkpointing
+➤ State Scrubbing
+➤ Process Pools & Rejuvenation
+➤ Recovery Block
+➤ Microreboots
+➤ State Correction
+➤ ...
+Today’s lecture
+3CHECKPOINTING
+➤ Checkpointing
+➤ Save process state periodically
+➤ Roll back to last saved state in case of errors
+➤ Simple version:
+➤ Every N requests:
+check-point state
+➤ When error is detected:
+Roll back to last checkpoint
+4PERIODIC CHECKPOINTING
+5BACKUP CODE REVISITED
+➤ Issue: failure during checkpointing.
+➤ what if parent crashes just after creating new grandkid?
+➤ Approach:
+➤ If we have multiple generations, we want the ancestors
+only to take over if none of the children is alive
+➤ Mechanism:
+➤ Use process links instead of, for example, waitpid
+14PROBLEM:
+LOST UPDATES
+15LOST UPDATES
+16LOST UPDATES
+first k requests
+processed by first child
+17LOST UPDATES
+after k requests:
+- new child is spawned
+- grandparent retired
+18LOST UPDATES on crash of child:
+- parent takes over
+- and spawns new child
+19LOST UPDATES
+state of parent:
+- does not contain state
+changes of request k+1
+to k+i
+20LOGGING REQUESTS
+request_no = 0;
+...
+for (int nxt_ckpt=0 ;; nxt_ckpt++) {
+checkpoint(&nxt_ckpt);
+wait_for_request(Request);
+log_to_disk(++request_no,Request);
+process_request(Request);
+}
+21LOGGING REQUESTS
+request_no = 0;
+...
+for (int nxt_ckpt=0 ;; nxt_ckpt++) {
+checkpoint(&nxt_ckpt);
+wait_for_request(Request);
+log_to_disk(++request_no,Request);
+process_request(Request);
+} Perform periodic
+checkpointing
+22LOGGING REQUESTS
+request_no = 0;
+...
+for (int nxt_ckpt=0 ;; nxt_ckpt++) {
+checkpoint(&nxt_ckpt);
+wait_for_request(Request);
+log_to_disk(++request_no,Request);
+process_request(Request);
+}
+store all requests
+23PROCESSING LOG
+request_no = 0;
+...
+for (int nxt_ckpt=0 ;; nxt_ckpt++) {
+if (checkpoint(&nxt_ckpt) == recovery) {
+while((request_no+1,R) in log) {
+process_request(R); request_no++;
+}
+}
+wait_for_request(Request);
+log_to_disk(++request_no,Request);
+process_request(Request);
+}
+24PROCESSING LOG
+request_no = 0;
+...
+for (int nxt_ckpt=0 ;; nxt_ckpt--) {
+if (checkpoint(&nxt_ckpt) == recovery) {
+while((request_no+1,R) in log) {
+process_request(R); request_no++;
+}
+}
+wait_for_request(Request);
+log_to_disk(++request_no,Request);
+process_request(Request);
+}
+On rollback:
+checkpoint
+function returns
+with old state
+25PROCESSING LOG
+request_no = 0;
+...
+for (int nxt_ckpt=0 ;; nxt_ckpt--) {
+if (checkpoint(&nxt_ckpt) == recovery) {
+while((request_no+1,R) in log) {
+process_request(R); request_no++;
+}
+}
+wait_for_request(Request);
+log_to_disk(++request_no,Request);
+process_request(Request);
+}
+Replay all requests that were
+logged after checkpoint
+26NOT THAT EASY...
+➤ Processing can be non-deterministic
+➤ e.g., use gettimeofday to generated ids
+➤ graceful degradation during initial execution / replay
+➤ multithreading, ...
+➤ State diverges from original computation
+➤ results of replayed request might be different
+➤ could detect this by keeping a log of replies
+➤ new client request might be processed incorrectly
+➤ e.g., ids in requests might not make sense to the new server
+27
+Approach: log state changes (e.g., keep state in DB)REJUVENATION
+VS.
+CHECKPOINTINGREJUVENATION AND CHECKPOINTING
+➤ Problem:
+➤ Rejuvenation: looses complete state
+➤ Checkpointing: saves all state
+➤ Need to find a balance between
+➤ saving all state
+➤ and
+➤ saving no state
+29CHECKPOINTING: FREQUENCY VS COMPLETENESS
+➤ Less complete checkpoint (Completeness)
+➤ higher probability that error is purged from saved state
+➤ omitted state needs to be recomputed on recovery
+➤ Less frequent checkpointing (Frequency)
+➤ higher probability that last checkpoint is correct
+➤ one might loose more updates (without request logging)
+➤ “Application save” is most of the time very robust
+➤ … people really hate when saved state is corrupted
+➤ might not always contain all info (e.g., window position) for
+transparent restart
+30EFFECTIVENESS OF CHECKPOINTING [1]
+0
+13
+25
+38
+50
+App-Specific Low-Freq App-Gen. App-Generic Undetected
+Percent Corrupted / Undetected
+nvi app
+postgres app
+oleo app
+(low frequency) (i.e., no recovery triggered
+state incorrect)
+complete
+(high frequency)
+partial
+31APPLICATION
+STATE SCRUBBINGAPPLICATION STATE SCRUBBING
+➤ Memory scrubbing is done in hardware
+➤ read ECC memory periodically
+➤ correct bit flips before 2nd bit flip occurs
+➤ Application State Scrubbing
+➤ save application state periodically
+➤ roll back to saved state immediately
+➤ in this way we might purge state errors
+33APPLICATION STATE SCRUBBING
+int ft = backup();
+restore_application_state();
+...
+for (int nxt_scrub=N ;; nxt_scrub -- ) {
+...
+if (nxt_scrub <= 0 && ft >= 0) {
+if (save_application_state() >= 0)
+exit(0);
+}
+wait_for_request(Request);
+process_request(Request);
+}
+34APPLICATION STATE SCRUBBING
+int ft = backup();
+restore_application_state();
+...
+for (int nxt_scrub=N ;; nxt_scrub -- ) {
+...
+if (nxt_scrub <= 0 && ft >= 0) {
+if (save_application_state() >= 0)
+exit(0);
+}
+wait_for_request(Request);
+process_request(Request);
+}
+start child process
+35APPLICATION STATE SCRUBBING
+int ft = backup();
+restore_application_state();
+...
+for (int nxt_scrub=N ;; nxt_scrub -- ) {
+...
+if (nxt_scrub <= 0 && ft >= 0) {
+if (save_application_state() >= 0)
+exit(0);
+}
+wait_for_request(Request);
+process_request(Request);
+}
+child process reads last
+application checkpoint
+36APPLICATION STATE SCRUBBING
+int ft = backup();
+restore_application_state();
+...
+for (int nxt_scrub=N ;; nxt_scrub -- ) {
+...
+if (nxt_scrub <= 0 && ft >= 0) {
+if (save_application_state() >= 0)
+exit(0);
+}
+wait_for_request(Request);
+process_request(Request);
+}
+save application state after
+N requests
+37APPLICATION STATE SCRUBBING
+int ft = backup();
+restore_application_state();
+...
+for (int nxt_scrub=N ;; nxt_scrub -- ) {
+...
+if (nxt_scrub <= 0 && ft >= 0) {
+if (save_application_state() >= 0)
+exit(0);
+}
+wait_for_request(Request);
+process_request(Request);
+}
+exit only if I’m a child process
+38APPLICATION STATE SCRUBBING
+int ft = backup();
+restore_application_state();
+...
+for (int nxt_scrub=N ;; nxt_scrub -- ) {
+...
+if (nxt_scrub <= 0 && ft >= 0) {
+if (save_application_state() >= 0)
+exit(0);
+}
+wait_for_request(Request);
+process_request(Request);
+}
+save application state and
+exit
+39APPLICATION STATE CORRECTION
+➤ Invariant:
+➤ “nxt_scrub >= 0 and nxt_scrub <= N”
+➤ Periodically check if invariants are true:
+➤ Correct state if invariants are violated
+➤ Used in practice to improve availability of services
+➤ or, roll back to last saved application state
+40APACHE
+MECHANISMPROCESS POOLS / REJUVENATION
+➤ How can we fix resource leaks without correcting our code?
+➤ Each process terminates after N requests
+➤ Operating system releases all resource of process
+➤ Note we need processes not threads!
+➤ This copes with hard to find resource leaks!
+42RESOURCE PREALLOCATION
+➤ Problem:
+➤ need multiple resources for a request to succeed
+➤ Example:
+43
+try {
+int sd = open_e(socket, “w”);
+write_e(sd, “<header>”);
+int fd = open_e(fn, “r”);
+sz = read_e(fd, buf);
+write_e(sd, buf);
+} catch (Err e) {
+????
+}try {
+int sd = open_e(socket, “w”);
+write_e(sd, “<header>”);
+int fd = open_e(fn, “r”);
+sz = read_e(fd, buf);
+write_e(sd, buf);
+} catch (Err e) {
+????
+}
+RESOURCE PREALLOCATION
+➤ Problem:
+➤ need multiple resources for a request to succeed
+➤ Example:
+throws exception if open fails
+44try {
+int sd = open_e(socket, “w”);
+write_e(sd, “<header>”);
+int fd = open_e(fn, “r”);
+sz = read_e(fd, buf);
+write_e(sd, buf);
+} catch (Err e) {
+????
+}
+RESOURCE PREALLOCATION
+➤ Problem:
+➤ need multiple resources for a request to succeed
+➤ Example:
+write header to TCP connection
+45try {
+int sd = open_e(socket, “w”);
+write_e(sd, “<header>”);
+int fd = open_e(fn, “r”);
+sz = read_e(fd, buf);
+write_e(sd, buf);
+} catch (Err e) {
+????
+}
+RESOURCE PREALLOCATION
+➤ Problem:
+➤ need multiple resources for a request to succeed
+➤ Example:
+Open file to be sent to TCP
+connection - might throw
+exception
+46try {
+int sd = open_e(socket, “w”);
+write_e(sd, “<header>”);
+int fd = open_e(fn, “r”);
+sz = read_e(fd, buf);
+write_e(sd, buf);
+} catch (Err e) {
+????
+}
+RESOURCE PREALLOCATION
+➤ Problem:
+➤ need multiple resources for a request to succeed
+➤ Example:
+Might get an exception after
+sending some information
+47RESOURCE PREALLOCATION
+(Note, we don’t deal with resource leaks…)
+try {
+int sd = open_e(socket, “w”);
+int fd = open_e(fn, “r”);
+sz = read_e(fd, buf);
+write_e(sd, “<header>”,buf);
+} catch (SocketError e) {
+log(“Socket Error …”);
+} catch (Err e) {
+write_e(sd, “<error>…”);
+}
+48RESOURCE PREALLOCATION
+(Note, we don’t deal with resource leaks…)
+try {
+int sd = open_e(socket, “w”);
+int fd = open_e(fn, “r”);
+sz = read_e(fd, buf);
+write_e(sd, “<header>”,buf);
+} catch (SocketError e) {
+log(“Socket Error …”);
+} catch (Err e) {
+write_e(sd, “<error>…”);
+}
+First perform operations that
+might fail (because of
+resource issues)
+49RESOURCE PREALLOCATION
+(Note, we don’t deal with resource leaks…)
+try {
+int sd = open_e(socket, “w”);
+int fd = open_e(fn, “r”);
+sz = read_e(fd, buf);
+write_e(sd, “<header>”,buf);
+} catch (SocketError e) {
+log(“Socket Error …”);
+} catch (Err e) {
+write_e(sd, “<error>…”);
+}
+Send reply after we got all
+resources needed to answer
+request
+50COMMON PROBLEMS
+➤ High load ⇒ resource depletion ⇒ server crashes
+➤ Programming bug ⇒ resource leaks
+➤ e.g., environment error triggers error handler, error handler
+does not free resources
+➤ This can occur in languages with a garbage collector too
+➤ Disk full ⇒ server crashes
+➤ Distributed system ⇒ partial error semantics (no atomicity)
+51MECHANISMS USED BY APACHE
+➤ Apache is known to be very robust
+➤ Apache uses several robustness mechanisms:
+➤ resource preallocation (⇒ atomicity)
+➤ graceful degradation (⇒ full disks)
+➤ selective retries (⇒ high load)
+➤ process pools (⇒ resource leaks)
+52RECOVERY BLOCKRECOVERY BLOCK
+ensure { postcondition } by
+{primary alternative }
+else by { 2nd alternative }
+else by { 3rd alternative }
+...
+else by { final alternative }
+else error;
+end
+54EXAMPLE
+ensure { A.sorted() } by
+{ A.my_new_quick_sort(); }
+else by { A.simple_bubble_sort(); }
+else throw exception;
+end
+55IMPLEMENTATION
+forever {
+if (! alternative_left()) {
+throw exception; }
+backup(parent);
+execute next alternative;
+if (postcondition()) {
+parent.terminate(); return; }
+exit(0);
+}
+56WATCHDOG
+forever {
+if (! alternative_left()) {
+throw exception; }
+backup(parent);
+set_watchdog(timeout);
+execute next alternative;
+if (postcondition) {reset_watchdog();
+parent.terminate(); return; }
+exit(0);
+}
+57EVALUATION [2]
+78
+3
+15
+3
+Recovery Block Evaluation
+Correct Recovery
+Recovery Failed
+Incorrect recovery (no prog. failure)
+Unnecessary recovery (no prog. failure)
+58COST [2]
+➤ Extra implementation cost (60%)
+➤ Extra data memory (35%)
+➤ Extra run-time (40%)
+➤ Extra code memory (33%)
+59MICROREBOOTS [3]MOTIVATION
+➤ Problem:
+➤ Rejuvenating application / system can take a long time
+➤ Can we rejuvenate single components?
+➤ seems to be very difficult
+➤ consider:
+➤ components A and B keep state related to their
+interaction
+➤ rejuvenating only A will most likely break B too
+➤ How can we make this work?
+61WHAT COULD WE GAING?RESPONSES / SECOND
+63FULL REJUVENATION VS MICROREBOOT
+false
+positives
+64WHY? -> GARBAGE COLLECTION
+65FULL REJUVENATION
+6667ARCHITECTUREEXECUTION ARCHITECTURE
+69APPLICATION ARCHITECTURE
+70APPLICATION ARCHITECTURE
+Recovery manager:
+restarts components
+71APPLICATION ARCHITECTURE
+Monitoring agent:
+detect failures
+72APPLICATION ARCHITECTURE
+Monitor and
+restart each other
+73APPLICATION ARCHITECTURE
+message bus: facilitates
+communication of
+components
+74APPLICATION ARCHITECTURE
+a bidirectional proxy between
+XML command messages and
+low-level radio commands
+75APPLICATION ARCHITECTURE
+satellite estimator: calculates
+satellite position, radio
+frequencies, and antenna
+pointing angles;
+76APPLICATION ARCHITECTURE
+satellite tracker: points
+antennas to track a satellite
+during a passAPPLICATION ARCHITECTURE
+radio tuner: tunes the radios
+during a satellite passREBOOT TREEREBOOT TREE
+recovery agent: reboots all its
+children on behalf of recovery
+managerREBOOT TREE
+B and C are rebooted togetherREBOOT TREE
+If A is rebooted, so are B and CREBOOT TREE
+Reboot tree captures
+dependencies between
+components that prevent
+independent rebootsHOW TO IMPROVE
+AVAILABILITY?COMPONENT MTTFCOMPONENT MTTF
+Mean Time To FailureCOMPONENT MTTF
+Dramatic differences!DEPTH AUGMENTATIONDEPTH AUGMENTATION
+Rejuvenation:
+microreboot all
+componentsDEPTH AUGMENTATION
+Microreboot: each individual
+component can be rebooted
+independentlyMEAN TIME TO REPAIRMEAN TIME TO REPAIR
+Mean Time To Repair: time to
+rejuvenate application /
+microreboot componentMEAN TIME TO REPAIR
+Almost 25 seconds to restart
+applicationMEAN TIME TO REPAIR
+Less than 6 seconds to reboot
+component mbusMEAN TIME TO REPAIR
+Almost 21 seconds to restart
+component fedrcomMEAN TIME TO REPAIR
+fedrcom:
+bad MTTR and bad MTTF!SPLIT COMPONENT
+fedrcom:
+can be split in two componentsSPLIT COMPONENT
+one with good MTTF
+one with bad MTTFSPLIT COMPONENT
+Good thing:
+the one with the bad MTTF
+has the small MTTR!SUBTREE DEPTH AUGMENTATIONSUBTREE DEPTH AUGMENTATION
+Approach:
+microreboot these components
+independentlyDEPENDENT FAILURESDEPENDENT FAILURES
+Problem:
+ses and str fail togetherDEPENDENT FAILURES
+Problem:
+after failed reboot of ses,
+whole tree is rebooted!DEPENDENT FAILURESDEPENDENT FAILURES
+Approach:
+- reboot components togetherIMPERFECT FAILURE DETECTIONIMPERFECT FAILURE DETECTION
+Problem:
+pbcom is rebooted but that
+does not fix the problemIMPERFECT FAILURE DETECTION
+Problem:
+pbcom is then rebooted
+afterwardsIMPERFECT FAILURE DETECTION
+Observation:
+if we reboot pbcom, it
+makes sense to reboot
+fedr at the same timeIMPERFECT FAILURE DETECTION
+reboot of pbcom
+implies reboot of fedrMEAN TIME TO REPAIRHOW CAN WE DECOUPLE
+COMPONENTS?TECHNIQUES TO FACILITATE MICROREBOOTS
+➤ Separation of data and component recovery:
+➤ Data and component must survive across failures
+➤ Data recovery:
+➤ All data that has to persist is stored in persistent storage
+(e.g., data base)
+➤ Component recovery:
+➤ rejuvenation
+116DECOUPLING
+➤ Need loose coupling of components
+➤ Example of tight coupling:
+➤ External pointers/references to within a component
+➤ Loose coupling:
+➤ Use registry to locate/access component
+➤ Use publish/subscribe paradigm (message bus)
+117RETRYABLE REQUESTS
+➤ Idempotent:
+➤ Callers use timeouts:
+➤ When timeout expires, retry failed call
+➤ Calls during rejuvenation:
+➤ Return of an exception (with new timeout)
+➤ For non-idempotent functions:
+➤ Need to cope with these using rollback / compensation
+actions...
+118LEASED RESOURCES
+➤ Problem:
+➤ Rejuvenation of component might leak resources
+➤ Approach:
+➤ All resources have a lease time
+➤ Component needs to extend lease if it wants to keep
+resource
+➤ Crash/rejuvenation:
+➤ Leases will expire, i.e., resources will be reclaimed
+119SUMMARY
+➤ Microreboots might improve the quality of service
+➤ Need to know which component to rejuvenate
+➤ structure of reboot can improve reboot time
+➤ Question:
+➤ but what if persistent state gets corrupted?
+120MICROSERVICES
+http://martinfowler.com/articles/microservices.htmlSCALABILITYSCALABILITY
+Load balancerSCALABILITY OF MICROSERVICES
+http://martinfowler.com/articles/microservices.html
+Load balancer Load balancer Load balancerSCALABILITY OF MICROSERVICES
+Load balancer Load balancer Load balancer
+recovery
+manager
+restart on failureRECOVERY MANAGER
+fixed URL
+fixed URL fixed URL fixed URL
+recovery
+manager
+periodic check
+restart on failure
+restart
+on failureDATA RECOVERYSUMMARY / TAKE AWAY
+➤ Check-pointing / Lost updates
+➤ State Scrubbing
+➤ Resource pre-allocation
+➤ Recovery blocks
+➤ Micro-reboots
+➤ Reboot trees
+➤ Subtree depth augmentation
+➤ Splitting & group consolidationREFERENCES
+[1] S. Chandra, P. Chen, “The Impact of Recovery Mechanisms on the
+Likelihood of Saving Corrupted State”, ISRE2002
+[2] Anderson, T. et al., “Software Fault Tolerance: An Evaluation”,
+IEEE Transaction on Software Engineering, 12, 1985, pp.
+1502-1510
+[3] George Candea, James Cutler, Armando Fox: “Improving
+Availability with Recursive Microreboots: A Soft-State System Case
+Study” in Performance Evaluation Journal, vol. 56, nos. 1-3,
+March 2004
+129
+BASIC SFT MECHANISMS I
+Prof. Dr. Christof Fetzer / Dr. André Martin, TU Dresden
+1
+STORY SO FAR…
+➤ Develop software with least bugs possible…
+➤ using random testing, symbolic execution, static analysis /
+bugs as deviant behavior, dynamic analysis like taint
+analysis
+➤ Still, software that you deploy will have bugs….
+2
+OUTLINE
+➤ Problem
+➤ Types of Bugs
+➤ Robustness Mechanisms
+➤ Process pairs
+➤ Graceful degradation
+➤ Selective retries
+➤ Checkpointing
+➤ Application state scrubbing
+➤ ...
+3
+PROBLEM: SOFTWARE BUGS
+➤ Software bugs are a fact
+➤ Too many features, too little time…
+➤ Many bugs might be removed
+➤ Many bugs might stay in software
+➤ Software needs to deal with bugs
+➤ How can we deal with bugs in software?
+➤ Bugs are often triggered by “bad” inputs from user and
+environment
+4
+EXAMPLE: USS YORKTOWN
+➤ Smart Ship Technology (1997):
+➤ 27 Pentium Pro
+➤ Windows NT
+➤ Application bug
+➤ division by zero
+➤ manual input value
+➤ dead in the water > 2 hours
+➤ Coping:
+➤ operators are trained not to insert 0 (or, to check on problems)
+5
+ROBUSTNESS
+➤ Definition: robust
+➤ “a system that has demonstrated an ability to recover gracefully
+from the whole range of exceptional inputs and situations in a
+given environment.”
+6
+ARCHITECTURE
+system calls
+7
+INPUTS: NETWORK, CONSOLE, FILE, …
+TCP
+read
+write
+system calls
+8
+ERRORS AND EXCEPTIONAL INPUT
+„bad input“
+errors system calls
+TCP
+9
+ROBUSTNESS VS SOFTWARE FAULT TOLERANCE
+➤ Robustness:
+➤ Goal is to handle abnormal situations/inputs
+➤ Software fault tolerance:
+➤ Tolerate the faults defined in a given failure model (can
+include design faults)
+➤ Robustness restricted to “environment” and “bad input”
+failures
+10
+PROBLEM: „MISSING RESOURCE FAILURES“
+➤ Many programs crash during high load
+➤ Resource depletion (file descriptors, memory, etc)
+➤ use up resources faster than they are replenished
+➤ Resources depletion because resources aren’t freed
+➤ bad error / exception handling
+➤ program bugs
+➤ Need to deal with „resource failures“
+⇒Robustness Mechanisms
+11
+EVALUATION OF ROBUSTNESS
+fd=open(file)
+s = read(fd, buf, sz)
+close(fd)
+12
+EVALUATION OF ROBUSTNESS
+fd=open(file)
+s = read(fd, buf, sz)
+close(fd)
+13
+Error Injection (e.g.,
+scripting with help of
+debugger )
+EXAMPLE: HOW ROBUST ARE PROGRAMS?
+[1] FIG: A Prototype Tool for Online Verification of Recovery Mechanisms, P. Broadwell et al
+14
+PROCESS PAIRS
+15
+TYPES OF BUGS
+➤ Heisenbug: non-reproducible
+”A bug that disappears or alters its behavior when one attempts to
+probe or isolate it.”
+➤ Bohrbug: reproducible
+”A repeatable bug; one that manifests reliably under a possibly
+unknown but well-defined set of conditions.”
+16
+TYPES OF BUGS (2)
+➤ Mandelbug: difficult to reproduce
+“Underlying causes are so complex and obscure as to make
+its behavior appear nondeterministic”
+➤ Question: do Heisenbugs really exist?
+17
+EXAMPLE OF HEISENBUGS/MANDELBUGS
+➤ Uninitialized variables
+➤ might have different values in different executions
+➤ Synchronization issues
+➤ threads might have different schedules/performance in debugger
+➤ Resource depletion
+➤ resources are lost very slowly - hard to reproduce in debugger
+➤ Memory layout dependent
+➤ buffer overwriting might typically have no effect…
+18
+BAD NEWS
+➤ Heisenbugs / Mandelbugs are hard to diagnose
+➤ Cannot easily be reproduced
+➤ e.g., trace-based bug reports are difficult to generate
+➤ Account for an increasing percentage of software faults
+encountered in the field [2]
+➤ Typically, software processes remove the deterministic,
+predictable design faults (Bohr bugs)
+19
+GOOD NEWS
+➤ Heisenbugs / Mandelbugs are hard to find
+➤ Cannot easily be reproduced!
+➤ Approach: retry on error
+➤ if error reproducible -> we log information on retry that helps
+to diagnose the bug!
+➤ if error disappears on retry -> we tolerated the bug!
+20
+HEISENBUGS VS BOHRBUGS
+➤ Heisenbugs are easier to take care of during run-time
+➤ higher chance that robust programming mechanisms are
+successful
+➤ Bohrbugs are typically easier to find and fix
+➤ But harder to take care of during run time
+21
+PROCESS PAIRS
+22
+PROCESS PAIRS [2]
+➤ Process pair scheme can tolerate some software faults:
+➤ Study of printing service with process pair technology
+(primary / backup)
+➤ 2000 systems; 10 million system hours
+➤ 99.3% of failures affected only one server, i.e., 99.3% of
+failures were tolerated
+23
+SIMPLE PROCESS PAIR (SAME HOST)
+...
+forever {
+wait_for_request(Request);
+process_request(Request);
+}
+event
+loop
+Server Process:
+24
+SIMPLE PROCESS PAIR (SAME HOST)
+int ft = backup();
+...
+forever {
+wait_for_request(Request);
+process_request(Request);
+}
+create backup process ;
+primary returns
+event
+loop
+Server Process:
+25
+SIMPLE PROCESS PAIR IMPLEMENTATION
+backup
+event loop event loop
+26
+PRODUCTION ENVIRONMENT…
+➤ Do not write process pair code yourself
+➤ many corner cases (e.g., ensure exactly one process)
+➤ Use of external service to start and restart service
+➤ well tested when used across multiple services
+➤ examples: systemd, upstart, supervisord 
+RESTARTING SERVICE
+➤ Objective:
+➤ after failure, restart service immediately (on same host or
+different host)
+➤ Approach:
+➤ multiple services that help with an automatic restart (e.g.,
+upstart, supervisord, …)
+EXAMPLE
+➤ Simple supervisord script:
+[program:pypi]
+command=/usr/bin/pypi/pypi-server --passwords /usr/bin/pypi/passwordfile
+-p 8080 /usr/bin/pypi/packages
+directory=/usr/bin/pypi/
+user=pypi
+autostart=true
+autorestart=true
+redirect_stderr=true
+supervisord
+myService
+start after boot
+restart after failure
+running
+supervisord states
+fatal restarting
+shutdown
+SUPERVISORD ARCHITECTURE 
+PROBLEMS
+➤ If supervisord fails to keep running, we need to detect
+this
+➤ If supervisord fails to keep service running, we need to
+detect this too
+➤ Approach: periodic polling of state via RPC interface
+➤ Problem:
+➤ detection delay vs overhead
+WATCHING SUPERVISORD
+supervisord
+myService
+start after boot
+restart after failure
+RPC interface:
+- query state of supervisord
+- query state of services
+service states
+WATCHING SUPERVISORD
+supervisord
+myService
+start after boot
+restart after failure
+Fault-Tolerant cluster controller
+- query state of supervisord
+- query state of services
+On failure:
+- restart affected services on
+a different host
+poll
+WATCHING SUPERVISORD
+supervisord
+myService
+1
+Event-oriented programming
+- fast and low overhead
+On failure:
+- notify fault-tolerant cluster
+controller of problem
+event subscriber
+service
+state change
+supervisord
+state change
+What if events are lost?
+COMBINED APPROACH
+➤ Periodically poll supervisord
+➤ e.g., use service redundancy to take care of detection delay
+➤ Use events
+➤ for low overhead monitoring, and
+➤ to quickly restart services on different host in case
+supervisord fails to keep service running
+GRACEFULL
+DEGRADATION
+GRACEFULL DEGREDATION
+➤ maximize fraction of good answers
+➤ if service cannot provide a good answer:
+➤ drop request (e.g., sent back error code and/or drop
+connection)
+EXAMPLES:
+➤ Transactional processing:
+➤ each request is processed within a transaction
+➤ on error that cannot be tolerated, abort transaction
+➤ send back error message, saying request has failed
+➤ Example:
+➤ web service: reply complete result or reply with an error
+➤ note: do not reply a partial or wrong result
+RETRIES!
+OBJECTIVE: TRY TO PROVIDE A GOOD ANSWER
+➤ Example: Operating system
+➤ many calls can fail when operating system is low on
+resources (e.g., not enough memory or file descriptors)
+➤ application can retry system call - hoping that this
+temporary condition has been resolved
+SELECTIVE RETRIES
+➤ Retries:
+➤ repeat a call until it succeeds or until we run out of time
+(timeout) or max. number of retries
+➤ Selective Retries:
+➤ repeat only calls when there is a chance that retry can
+succeed
+➤ e.g., memory shortage might disappear
+➤ e.g., invalid argument will typically stay invalid
+49
+NOT ALWAYS CLEAR IF RETRY COULD SUCCEED
+fork() creates a child process that differs from the parent process only in its PID
+and PPID, and in the fact that resource utilizations are set to 0. File locks and
+pending signals are not inherited.
+RETURN VALUE On success, the PID of the child process is returned in the parent's
+thread of execution, and a 0 is returned in the child's thread of execution. On
+failure, a -1 will be returned in the parent's context, no child process will be
+created, and errno will be set appropriately.
+ERRORS
+EAGAIN fork() cannot allocate sufficient memory to copy the parent's page tables
+and allocate a task structure for the child.
+EAGAIN It was not possible to create a new process because the caller's
+RLIMIT_NPROC resource limit was encountered.
+ENOMEM fork() failed to allocate the necessary kernel structures because memory
+is tight.
+50
+RETRY QUESTIONS...
+➤ How often should we retry?
+➤ should we wait between retries?
+➤ Should we retry at some later point in time?
+➤ how many times until we give up?
+➤ At what level should we retry?
+53
+HIERARCHICAL RETRIES
+potentially:
+exp. increase in retries!
+composability: retries should be independent of each other!
+RECOMMENDATION
+➤ On higher level of abstractions, there might be more
+alternatives
+➤ like process other requests first
+➤ ensure to free some resources first (-> trigger internal
+garbage collector)
+➤ …
+➤ Hence, it might be better
+➤ to only retry on the highest level of abstraction
+➤ free some resources first before retrying
+NOTES: SELECTIVE RETRIES
+➤ Under high load, calls might fail due to resource shortage
+➤ We can use selective retries to increase probability of success
+during resource allocation
+➤ Operating systems like Linux have a “killer process” that
+terminates processes if too few resources available
+➤ With selective retries this will make sure that processes that
+survive can complete their requests
+56
+BOHRBUGS
+57
+CONTINUOUS CRASHING
+58
+CONTINUOUS CRASHING
+➤ Finite number of retries by client?
+➤ client will stop sending the request eventually
+➤ But what if we cannot control clients
+➤ clients might think it is fun to crash server?
+59
+GRACEFUL DEGRADATION
+➤ Alternative Approach:
+➤ server needs to make sure that failed request is only retried
+for a fixed number of times
+➤ Problem:
+➤ how can we know that a request has already been partially
+processed several times?
+➤ Solution:
+➤ need to keep some state between service instances!
+60
+STATE HANDLING
+61
+USING SESSION STATE
+int ft = backup();
+...
+forever {
+wait_for_request(Request);
+get_session_state(Request);
+if(num_retries < N) {
+process_request(Request);
+store_session_state(Request);
+} else { return_error(); }
+}
+updates number
+of retries
+62
+PROCESS LINKS
+Crash Detection
+71
+DETECTION OF PROCESS CRASHES
+➤ Pipe is used to communicate between procs
+➤ Unix: ls | sort
+➤ Pipe end closed when
+➤ process terminates
+➤ Process B can detect
+➤ when process A terminated
+72
+LINKING PROCESSES
+➤ We can use a pipe as a failure detector:
+➤ We can detect that a process has terminated
+➤ We can use that for:
+➤ Replacing failed processes
+➤ Providing some “termination atomicity”:
+➤ If one process fails, some other processes might not be
+able to work properly anymore
+➤ One simple way is to terminate all such processes
+➤ this a garbage collection of processes
+73
+PROCESS LINKS: “TERMINATION ATOMICITY”
+➤ Set of cooperating processes
+➤ If some process p terminates, each linked process q must
+terminate
+➤ We can link processes via “process links”:
+➤ Programming language support:
+➤ Native support in Erlang
+74
+PIPE AND FILTER
+crash of one process
+-> terminate all others
+terminate
+terminate
+process
+process
+process
+EXAMPLE: FARMER / WORKER
+crash of worker
+-> recreate worker
+terminate
+ASYMMETRIC LINK BEHAVIOR
+crash of one farmer
+-> terminate workers terminate
+MASTER AS PROCESS PAIR
+crash of a farmer
+-> other takes over
+terminate worker
+if all farmers crash
+ROBUST PROGRAMMING MECHANISMS
+➤ Process Pairs
+➤ Graceful Degradation
+➤ Selective Retry
+➤ Rejuvenation
+➤ Checkpointing
+➤ State Scrubbing
+➤ State Correction
+➤ Atomic Failure Semantics
+➤ Resource Preallocation
+➤ ...
+79
+RESOURCE DEPLETION: APACHE [3]
+STATE REJUVENATION
+➤ Reset state to a previous state
+➤ often this is the initial state (best tested)
+➤ or it can be a previously saved one
+➤ Rejuvenation is good for
+➤ addressing resource depletion
+➤ heisenbugs (unlikely that process runs in same problem)
+➤ detecting and addressing configuration problems
+➤ Rejuvenation can be
+➤ Proactive:
+➤ Before application is crashing / hanging
+➤ Reactive:
+➤ when application is hanging (on demand)
+83
+PROACTIVE REJUVENATION VARIANTS
+➤ Periodic:
+➤ Simple period: every Sunday at 4am
+➤ Model based: calculated on past experience
+➤ Load-based:
+➤ Simple: every 1000 requests
+➤ Model based: calculate request number on past exp.
+➤ Predictive:
+➤ Online monitoring to detect that a crash is likely to happen in the
+next hours/minutes/seconds/...
+➤ Select a convenient time to rejuvenate
+84
+CAVEATS
+➤ Service caches states
+➤ for higher throughput
+➤ for lower latency
+➤ for higher availability (decouple from other services)
+➤ Rejuvenation
+➤ we need to recreate state during restart
+➤ we depend on other services during restart
+➤ Approach:
+➤ only rejuvenate if all services that are needed for recovery are
+available
+85
+ROBUST PROGRAMMING MECHANISMS
+➤ Process Pairs
+➤ Graceful Degradation
+➤ Selective Retry
+➤ Checkpointing
+➤ State Scrubbing
+➤ State Correction
+➤ Atomic Failure
+Semantics
+➤ Resource Preallocation
+➤ ...
+REFERENCES
+[1] Pete Broadwell, Naveen Sastry, Jonathan Traupman, Fault Injection in
+glibc (FIG), UCB, 2001.
+[2] Arun K.Somani, Nitin H. Vaidya, Understanding Fault Tolerance and
+Reliability, IEEE Computer, April 1997.
+[3] Lei Li, Kalyanaraman Vaidyanathan and Kishor S. Trivedi, An
+Approach for Estimation of Software Aging in a Web Server, ISESE2002
+[4] S. Chandra, P. Chen, The Impact of Recovery Mechanisms on the Likelihood
+of Saving Corrupted State, ISRE2002
+88
+FUZZING
+Software Testing
+Prof. Christof Fetzer / Dr. Andre Martin
+OVERVIEW
+What is Fuzzing?
+ORIGINS
+ Fuzzing was born in a "dark and stormy night in the Fall of
+1988" [Takanen et al, 2008.]. Sitting in his apartment in
+Wisconsin, Madison, professor Barton Miller was connected to
+his university computer via a 1200 baud telephone line. The
+thunderstorm caused noise on the line, and this noise in turn
+caused the UNIX commands on either end to get bad inputs –
+and crash. [...] He wanted to investigate the extent of the
+problem and its causes. So he crafted a programming exercise
+for his students at the University of Wisconsin-Madison – an
+exercise that would have his students create the first fuzzers.
+Source: https://www.fuzzingbook.org/html/Fuzzer.html
+FUZZING
+➤ Definition
+➤ Diverse usage and interpretation in the community
+➤ Here: Fuzzing is a way of discovering bugs in software by
+providing randomised inputs to programs to find test cases
+that cause a crash
+➤ Goal
+➤ Find crashes
+➤ Find abnormal behaviour
+➤ Find security vulnerabilities
+TESTING VARIANTS
+➤ Positive testing
+➤ Test features
+➤ Negative testing
+➤ Test if the system does things it is not supposed to do
+➤ Fuzzing belongs to negative testing
+FUZZING VS. RANDOM TESTING
+➤ Random testing is a simple version of fuzzing
+➤ Problem of random testing: Coverage increases slowly
+➤ Fuzzing: Try to generate test cases in a smarter, more
+efficient way
+TERMINOLOGY
+➤ Coverage
+➤ Number of basic blocks touched/passed by the execution
+➤ Depth
+➤ Touching/passing several layers of the software stack
+➤ Example: HTTP protocol as a gatekeeper for the application
+server behind
+TERMINOLOGY (CONT’D)
+➤ Black box testing
+➤ System’s internals is completely opaque
+➤ Only observation of input/output
+➤ Example: Search engine advisable via http
+➤ White box testing
+➤ Access to source code and knowledge about the internals of the system
+➤ Grey box testing
+➤ Between white and black, i.e., applies white box where source code
+available, otherwise blackbox
+ANATOMY OF A FUZZER
+➤ Test Case Generator
+➤ Testing inputs to drive SUT
+➤ Different approaches on how to generate the input
+➤ Delivery Mechanism
+➤ Presents the output of the fuzz generator as input to the SUT
+➤ Examples: files, network packets, etc.
+➤ Monitoring System
+➤ Observing the SUT and detection of errors that arise as input is
+presented
+DATA
+GENERATION
+TEST-CASE GENERATION METHODS
+➤ Mutative
+➤ Start with a sample input (e.g., valid file)
+➤ Mutate (modify) a part of it
+➤ Good for highly structured inputs
+➤ Less intelligence
+➤ Less human effort to understand protocols & interfaces
+➤ Generative
+➤ Generate the test cases from scratch
+➤ Higher level of coverage
+➤ More effort, if based on templates or grammars (see next)
+DATA PRODUCTION METHODS
+➤ Oblivious Fuzzer
+➤ Randomly mutate/generate data
+➤ Similar to Random Testing
+➤ Template Based
+➤ Provide an input template
+➤ Modify/generate only those parts that are allowed by the template
+➤ Simple interface: Minimal understanding of the structure accepted by SUT
+➤ Block Based
+➤ Data represented as nested data blocks of varying types as opposed to string
+sequences (template based)
+RANDOM DATA PRODUCTION (CONT’D)
+➤ Grammar Based
+➤ Grammar covers some part of input language
+➤ Heuristic based
+➤ Better than complete random, e.g., exploits knowledge of common
+error sources (integer overflows, off-by-one etc.)
+➤ Protocol Fuzzers
+➤ Protocol description, not only grammar
+EVOLUTIONARY FUZZING
+➤ Generation/mutation based on coverage feedback
+➤ Algorithm
+1. Aquire an initial input corpus
+2. Randomly mutate the inputs
+3. Run with the new inputs and measure coverage
+4. Coverage increased? Add the input to the corpus
+5. Go to (2)
+CLASSIFICATION OF SOPHISTICATION FOR FUZZER’S DATA PRODUCTION
+➤ Static & random template-based
+➤ simple request/response protocols - no dynamic functionality
+➤ Block based
+➤ Some rudimentary dynamic content (checksums etc)
+➤ Dynamic generation / Evolution based
+➤ Limited ability to learn a protocol based feedback
+➤ Model or Simulation based
+➤ Full implementation of a protocol
+Sophistication
+DELIVERY
+MECHANISMS
+DELIVERY MECHANISMS
+➤ Objective: Taking test case and presenting it to the SUT
+➤ Mechanisms
+➤ Environment Variables
+➤ Invocation Parameters (e.g. command line and API
+parameters)
+➤ Network Messages
+➤ Operating System Events (includes mouse and keyboard
+events)
+MECHANISMS (CONT’D)
+➤ File based
+➤ most simple one
+➤ also, most common
+➤ Network
+➤ Carried out as a proxy
+➤ Challenge: Session/protocol state -> dynamic fuzzer
+➤ Direct memory injection
+➤ Risk to corrupt the state and abort the program
+MONITORING
+MONITORING SYSTEMS
+➤ Error detection system
+➤ Often coupled with the Fuzz generator to know what input triggered
+which error condition
+➤ Local Monitoring Systems
+➤ Installed on the same node
+➤ Simple example: Feed input and watch for core dump files
+➤ Remote Monitoring Systems
+➤ Can only observe input and output of the SUT
+➤ Example: Monitor connection resets
+SUMMARY: FUZZING WORKFLOW
+1. Identify the target
+2. Write/prepare the fuzzing driver
+➤ Test case delivery
+3. Set up data generator
+➤ Grammar-based: Write the grammar
+➤ Mutation-based: Prepare seed inputs
+4. Set up monitoring
+➤ Crash/misbehaviour detection
+5. After fuzzing
+➤ Analyse results and fix bugs
+SUMMARY
+➤ Benefits
+➤ Simple way to test application in unexpected ways
+➤ Cheaper than manual testing
+➤ Drawbacks
+➤ Never exhaustive
+➤ Must be combined with other testing methods
+➤ Long testing time
+➤ Compensated by easy parallelisation 
+TLS ATTACKER
+Fuzzing example/application
+MOTIVATION
+➤ TLS is todays standard for data exchange encryption
+➤ Used by many applications/protocols: https/imaps etc.
+➤ Vulnerabilities are widespread and are critical to many
+domains such as banking applications etc.
+➤ Numerous TLS implementations exit: OpenSSL, MatrixSSL,
+Botan and GnuTLS - how to test them all?
+➤ Previous existing tools only allowed for message field
+modifications
+➤ Many issues/vulnerabilities found in message/protocol flow
+- TLS attacker
+MOTIVATION - EXAMPLES
+➤ Padding oracle vulnerability introduced through patch for
+Lucky13 attack
+➤ Missing length check for sufficient HMAC - turned OpenSSL
+in direct padding oracle
+➤ …
+➤ Constant testing is needed
+➤ Negative tests in addition to positive tests
+➤ Complex protocol structure of TLS handshake
+TLS ATTACKER APPROACH
+➤ Concept modifiable variable
+➤ Container for basic data types which can be manipulated
+➤ Allows for defining custom message flows
+➤ Custom protocol flows can be defined
+➤ Code available on github:
+➤ https://github.com/RUB-NDS/TLS-Attacker
+BACKGROUND TLS PROTOCOL/HANDSHAKE
+TESTED LIBRARIES TLS ATTACKER
+➤ Botan
+➤ GnuTLS
+➤ Java Secure Socket Extension
+➤ MatrixSSL
+➤ EmbedTLS
+➤ OpenSSL
+ATTACK CATEGORIES
+➤ Cryptographic attacks
+➤ Mac then pad, then encrypt vulnerability:
+➤ Server indicates if padding bytes are correct or not
+➤ One can guess the cypher text byte by byte that way
+(flipping bits)
+➤ Side channel timing attacks
+➤ Bleichenbacher’s attack
+➤ Server indicates if cipher text is invalid or not
+ATTACK CATEGORIES (CONT’D)
+➤ State machine attacks
+➤ inject early Change-CipherSpec message with null secret
+➤ Man in the middle can read the whole conversation
+➤ Overflow and Overread attacks
+➤ Heartbleed
+TLS ATTACKER EXAMPLE BLEICHENBACHER’S ATTACK
+Observe
+behaviour when
+using different
+PreMaster secrets
+FUZZING USING TLS ATTACKER
+➤ Variable manipulations
+➤ Integer: XORs, shifts, increases, decreases w/ random
+values
+➤ Strings: remove/insert and shuffle bytes, dictionaries
+➤ Vulnerability detection
+➤ Runtime behaviour observation using ASan (Address
+Sanitizer for C/C++ based implementations)
+➤ TLS Context Analyzer for Java-based implementations
+FUZZING METHODOLOGY - 2 STAGED FUZZING
+➤ Cryptographic behaviour
+➤ Testing for error messages/robustness to invalid messages
+➤ Tests for Bleicherbacher, Padding oracle, POODLE attack etc.
+➤ Buffer boundary violations
+➤ Apply fuzzing only to specific variables
+➤ Blacklist: random values, i.e., client random
+➤ Objective: Validate length etc. checks etc.
+➤ Protocol flow modifications
+➤ Remove add messages to the standard flows
+SUMMARY TLS ATTACKER
+➤ TLS attacker can reveal several vulnerabilities
+➤ Buffer overflows/overruns
+➤ Protocol flow issues
+➤ Using assertions can be used for
+➤ Positive and
+➤ Negative testing (Fuzzing)
+➤ Potential extensions (Future work)
+➤ Tests for other protocols such as IPSec over SSH
+REFERENCES
+➤ Richard McNally, Ken Yiu, Duncan Grove and Damien
+Gerhardy, Fuzzing: The State of the Art
+➤ Juraj Somorovsky, Systematic Fuzzing and Testing of TLS Libraries
+
+TAINT ANALYSIS
+Prof. Dr. Christof Fetzer / Dr. André Martin, TU Dresden
+1
+ANNOUNCEMENTS
+➤ No lecture on Wednesday next week (Dies academicus)
+➤ BUT we will have a lecture on Friday (17th of May)
+SQL INJECTION [2]
+➤Attacker constructs data that injects database
+commands
+➤Example:
+$res = executeQuery ("SELECT real_name FROM users
+WHERE user = '" . $user . "'AND pwd = '" . $pwd .
+"' ");
+3
+$res = executeQuery ("SELECT real_name FROM users
+WHERE user = '' OR 1=1; — ‘;’ AND pwd = '’ ");
+AUTOMATED: MAGIC QUOTES [2]
+➤ Escape all quotes supplied by a user
+➤ Implemented in PHP and other scripting languages
+➤ Extremely successful
+➤ Does not require the programmer to do anything
+➤ Prevents many SQL injection attacks
+➤ But not all injection attacks
+4
+APPROACH: DYNAMIC TAINTING ANALYSIS
+➤ Replace PHP interpreter with a modified interpreter that:
+➤ Keeps track of which information comes from untrusted
+sources (precise tainting)
+➤ Checks how untrusted input is used
+5
+COARSE GRAIN TAINTING [2]
+➤ Provided by many scripting languages (Perl, Ruby)
+➤ Untrusted input is tainted
+➤ Everything touched by tainted data becomes tainted
+6
+$query = "SELECT real_name FROM users WHERE
+user = '" . $user
+. "'AND pwd = '"
+. $pwd . "' ";
+Entire $query string is tainted
+PRECISE TAINTING [2]
+➤ Untrusted input is tainted
+➤ Taint markings are maintained at character level
+➤ Depends on semantics of program
+➤ Only really tainted data is marked as tainted
+7
+$query = "SELECT real_name FROM users WHERE
+user = '" . $user . "'AND pwd = '" .
+$pwd . "' ";
+
+$query = "SELECT real_name FROM users WHERE
+user = '' OR 1 = 1; -- ';'AND pwd = ''";
+PRECISE CHECKING [2]
+➤ Wrappers around PHP functions
+➤ update and check precise taint information
+➤ Conservative:
+➤ no false negatives while minimizing false positives
+➤ behavior only changes when an attack is likely
+8
+PREVENTING SQL INJECTION [2]
+➤ Parse the query using the PostgreSQL parser:
+➤ identify interpreted text
+➤ Disallow SQL keywords or delimiters in interpreted text that
+is tainted
+➤ Query is not sent to database
+➤ Error response returned
+"SELECT real_name FROM users WHERE
+user = '' OR 1 = 1; -- ';' AND pwd = '' ";
+9
+delimiters and keywords are tainted
+PREVENTING PHP INJECTION
+➤ Disallow tainted data to be used in functions that treat
+input strings as PHP code or manipulate system state
+➤ place wrappers around these functions to enforce this
+rule
+10
+Other Uses of
+Taint Analysis?
+11
+Sting: An
+Automatic
+Defense System
+against Zero
+-day
+Worm Attacks
+Dawn Song
+12
+PROBLEM: INTERNET WORMS
+➤ Propagate by exploiting vulnerable software
+➤ No human interaction needed to spread
+➤ Able to rapidly infect vulnerable hosts
+➤ Slammer scanned 90% of Internet in 10 minutes
+➤ Need automatic defense against new worms
+13
+STING: AUTOMATIC WORM DEFENSE
+14
+!
+Exploit
+Detected!
+STING ARCHITECTURE
+15
+Incoming traffic Exploit
+Detector
+Malicious flows Signature
+Generator
+Generated
+Signatures
+Signature
+Dissemination
+System
+Disseminating
+Signatures
+Innocuous
+Flows
+GOALS FOR EXPLOIT DETECTION MECHANISM
+➤ Detect most types of exploits
+➤ Have few false positives and negatives
+➤ Work on commodity software (no source)
+➤ Provide detailed info about vulnerability & exploit
+16
+COMMON TRAITS OF SOFTWARE EXPLOITS
+➤ Most known exploits are overwrite attacks
+➤ Attacker’s data overwrites sensitive data
+➤ Common overwrite vulnerabilities:
+➤ Buffer overflows
+➤ Format string
+➤ Double-free
+➤ Common overwrite targets:
+➤ Return address
+➤ Function pointer
+17
+APPROACH: DYNAMIC TAINT ANALYSIS
+➤ Hard to tell if data is sensitive when it is written
+➤ Binary has no type information
+➤ Easy to tell it is sensitive when it is used
+➤ e.g., if data is a return address
+➤ Approach: Dynamic Taint Analysis:
+➤ Keep track of tainted data from untrusted sources
+➤ Detect when tainted data is used in a sensitive way
+➤ e.g., as return address or function pointer
+18
+EXAMPLE: DETECTING A BUFFER OVERFLOW
+19
+buffer start
+Memory
+Function Pointer ATTACK DETECTED
+when tainted fp is used!
+buffer boundary
+Socket data
+DESIGN & IMPLEMENTATION: TAINTCHECK
+➤ Valgrind tool to monitor execution
+➤ Instrument program binary at run-time
+➤ No source code required
+➤ Track a taint value for each location:
+➤ Each byte of tainted memory
+➤ Each register
+20
+TAINTCHECK COMPONENTS
+21
+TaintSeed TaintTracker
+Copy
+TaintAssert
+!!! Misuse
+Untrusted
+Input
+TAINTSEED
+➤ Monitors input via system calls
+➤ Marks data from untrusted inputs as tainted
+➤ Network sockets (default)
+➤ Standard input
+➤ File input
+➤ except files owned by root,
+➤ such as system libraries
+22
+!!!
+TAINTTRACKER
+➤ Propagates taint
+➤ Data movement instructions:
+➤ e.g., move, load, store, etc.
+➤ Destination tainted iff source is tainted
+➤ Taint data loaded via tainted index
+➤ e.g., unicode = translation_table[tainted_ascii]
+➤ Arithmetic instructions:
+➤ e.g., add, xor, mult, etc.
+➤ Destination tainted iff any operand is tainted
+➤ Untaint result of constant functions
+➤ xor eax, eax
+23
+!!!
+TAINTASSERT
+➤ Detects when tainted data is misused
+➤ Destination address for control flow (default)
+➤ Format string (default)
+➤ Argument to particular system calls (e.g., execve)
+➤ Invoke Exploit Analyzer when exploit detected
+24
+!!!
+COVERAGE: ATTACK CLASSES DETECTED
+25
+✔ ✔ N/A ✔
+✔ ✔ ✔ ✔
+✔ ✔ ✔ ✔
+✔ ✔ ✔ ✔
+Return Address
+Function Pointer
+Fn Ptr Offset (GOT)
+Jump Address
+Target
+Vulnaribility
+EXPERIMENTAL RESULTS: DETECTS MANY ATTACKS
+26
+Vulnerable
+Program
+Overwrite
+Method
+Overwrite
+ Target
+Detected
+ATPhttpd Buffer overflow Return address ✔
+Synthetic Buffer overflow Function pointer ✔
+Synthetic Buffer overflow Format string ✔
+cfingerd syslog format
+string GOT entry ✔
+wu-ftpd vsnprintf format
+string Return address ✔
+Others including slapper, SQL Slammer
+FALSE POSITIVE EVALUATION
+➤ Tested >15 programs
+➤ apache, named, bftpd, ssh, emacs, Firebird…
+➤ Settings
+➤ Taint input from sockets
+➤ Taint input from files not owned by root
+➤ Check that format strings, return addresses, and function
+pointers are not tainted
+➤ Methodology
+➤ Common-case run of each application
+➤ Ensure there is significant tainted input
+➤ Result: no false positives
+27
+IMPROVING PERFORMANCE
+➤ Reduce added instrumentation
+➤ Combine with static analysis
+➤ Preliminary implementation:
+➤ bzip2 slowdown 37x to 24x
+➤ More efficient instrumentation
+➤ Currently a C function call after most instructions
+➤ Replace with optimized and inlined code
+➤ More efficient monitoring
+➤ Valgrind adds 4x overhead
+➤ dynamoRio / PIN tool adds much less overhead
+28
+Signature
+Generator
+Vulnerability
+-Specific
+Execution Filtering
+29
+STING ARCHITECTURE
+30
+Incoming traffic Exploit
+Detector
+Malicious flows Signature
+Generator
+Generated
+Signatures
+Signature
+Dissemination
+System
+Disseminating
+Signatures
+benign
+flows
+TaintCheck
+VSEF
+ANTIBODY REQUIREMENT: VULNERABILITY-SPECIFIC
+➤ Signatures are typically exploit-specific
+➤ signature used for intrusion detection (= sequence of
+bytes)
+➤ Not robust against polymorphism
+➤ Use encryption and code obfuscation to automatically
+rewrite exploit code each time
+➤ Antibodies should be vulnerability-specific
+31
+VULNERABILITY SPECIFIC EXECUTION FILTERING (VSEF)
+➤ Execution filtering instead of input-based filtering
+➤ Greater accuracy
+➤ Works with encrypted protocols
+➤ Approach:
+➤ Assuming monitoring detects new attacks
+➤ Generate execution filter specifying detection code needed to detect
+attacks against that vulnerability
+➤ Efficiency:
+➤ Only monitor execution for vulnerability-related segments
+➤ In contrast to traditional full protection:
+➤ Rewrite binary to insert checks at every potential vulnerability
+➤ Problem: Too slow to use everywhere all the time
+32
+VSEF EXAMPLE
+33
+buf[j] = x
+…
+anotherbuf[k] = y
+…
+yetanother[m] = z
+Vulnerable Program
+buf[j] = x
+…
+if (is_tainted(k)
+or
+is_tainted(y))…
+anotherbuf[k] = y
+…
+yetanother[m] = z
+Vulnerability-Specific
+Execution Filtering
+Full
+Execution Filtering
+if (is_tainted(j)
+or
+is_tainted(x))…
+buf[j] = x
+…
+if (is_tainted(k)
+or
+is_tainted(y))…
+anotherbuf[k] = y
+…
+if (is_tainted(m)
+or
+is_tainted(z))…
+yetanother[m] = z
+VSEF ARCHITECTURE
+34
+VSEF
+Sample
+Exploit
+Exploit
+Detector
+Exploit
+execution
+trace VSEF Filter
+Generation
+VSEF Binary
+Instrumentation
+Engine
+VSEF Filter
+Hardened
+Binary
+Program
+Vulnerable
+Binary
+Program
+FULL DYNAMIC TAINT ANALYSIS
+1. recv(socketfd, buf1, …)
+NewTaint(buf1, …)
+2. memcpy(buf2, buf1, …)
+PropTaint(buf2, buf1, …)
+3. y = x
+PropTaint(&y, &x, …)
+4. strcpy(dummy->buf, buf1)
+PropTaint(dummy->buf, buf1, …)
+5. dummy->fnptr()
+TaintAssert(&fnptr, …)
+35
+MISUSE!
+x
+y
+buf1
+buf2
+dummy->buf
+dummy->fnptr
+Memory Map
+TAINT-BASED VSEF
+➤ Full taint analysis: most instructions instrumented
+➤ 3x to 40x slowdown
+➤ Only a few are relevant to a particular vulnerability
+➤ Strategy:
+➤ Detection: Track which instructions propagate or misuse
+taint
+➤ VSEF generation: Identify relevant instructions
+➤ VSEF instrumentation: Instrument only relevant
+instructions
+36
+TAINT-BASED VSEF FILTER GENERATION
+1. recv(socketfd, buf1, …)
+NewTaint(buf1, …)
+2. memcpy(buf2, buf1, …)
+PropTaint(buf2, buf1, …)
+3. y = x
+PropTaint(&y, &x, …)
+4. strcpy(dummy->buf, buf1)
+PropTaint(dummy->buf, buf1)
+5. dummy->fnptr()
+TaintAssert(&fnptr)
+37
+MISUSE!
+x
+y
+1 buf1
+buf2 2
+dummy->buf
+dummy->fnptr
+4
+Memory Map
+VSEF filter
+Taint misuse at:
+5
+Taint propagation at:
+4
+1
+TAINT-BASED VSEF BINARY HARDENING
+1. recv(socketfd, buf1, …)
+NewTaint(buf1, …)
+2. memcpy(buf2, buf1, …)
+3. y = x
+4. strcpy(dummy->buf, buf1)
+PropTaint(dummy->buf, buf1)
+5. dummy->fnptr()
+TaintAssert(&fnptr)
+38
+MISUSE!
+1 buf1
+dummy->buf
+dummy->fnptr
+4
+Memory Map
+VSEF filter
+Taint misuse at:
+5
+Taint propagation at:
+4
+1
+FALSE POSITIVE ANALYSIS: UNTAINTING
+➤ Challenge: instruction not in filter overwrites tainted data with
+clean data
+➤ Solution 1: untaint heuristic
+➤ Record value of tainted memory
+➤ Value changes → untaint
+➤ Drawback: uninstrumented instruction may overwrite tainted
+memory with same value it already had
+➤ Solution 2: hardware assistance
+➤ Use hardware assistance to detect writes to tainted memory
+➤ E.g., memory watch points, write-protected pages
+➤ Drawback: not always available, trap on write to tainted
+memory
+39
+FALSE NEGATIVE ANALYSIS: POLYMORPHISM
+➤ Immune to polymorphism (code encryption)
+➤ False negative if exploited via alternate execution path
+➤ Not many such paths possible
+➤ Attacker has to manually find alternate execution paths
+➤ Can merge VSEFs when we observe another execution
+path
+40
+Path 1: 1,3,6 Path 2: 1,5,6 Union: 1,3,5,6
+1. recv(buf, socketfd, …)
+2. if (buf[0] == 1)
+3. while((dummy->buf[j] = buf[j]) != ‘\0’));
+4. else if (buf[1] == 2)
+5. while((dummy->buf[j] = buf[j]) != ‘\0’));
+6. dummy->fnptr();
+EVALUATION
+➤ Experiment 1: Valgrind implementation (Linux)
+➤ ATP httpd web server
+➤ Invalid URL buffer overflow
+➤ Use Flood tool to fetch 1 KB pages
+➤ Experiment 2: DynamoRIO implementation (Windows)
+➤ SQL Server
+➤ SQL Slammer exploit
+➤ Simple SELECT query
+41
+PERFORMANCE EVALUATION
+➤ ATPhttpd (Valgrind on Linux)
+➤ 186 us to generate VSEF from execution trace
+➤ 195 ms to harden binary
+➤ Hardened binary
+➤ 6% overhead over Valgrind
+➤ 140% over native
+➤ SQL Server (DynamoRIO on Windows)
+➤ Hardened binary
+➤ 3% over DynamoRIO
+➤ 14% over native
+42
+ACCURACY EVALUATION
+➤ No false positives during performance analysis
+➤ Successfully detects original attack
+➤ Successfully detects polymorphic variants
+➤ Replaced attack-code with random byte values
+43
+PROPERTIES OF TAINT-BASED VSEF
+➤ Accurate
+➤ Zero or low false positives
+➤ Low false negatives, effective for polymorphic worms
+➤ Fast generation
+➤ Negligible time from execution trace
+➤ No side-effect on normal execution
+➤ Does not change normal program execution behavior
+➤ No extra testing needed
+➤ Efficient
+➤ “Low” performance overhead (10% over Valgrind)
+44
+OTHER APPLICATIONS FOR TAINT ANALYSIS
+➤ Running MySQL server in Intel SGX enclaves
+➤ Partitioning of programs
+➤ Query optimizer vs.
+➤ Query executer
+SUMMARY & TAKE AWAY
+➤ Advantages of static vs. dynamic taint analysis
+➤ Coarse vs. precise tainting
+➤ Dynamic Taint analysis
+➤ TaintCheck: TaintSeed, TaintTrack, TaintAssert
+➤ Sting: How to efficiently detect and prevent the spreading of
+worms
+➤ VSEF Vulnerability Specific Execution Filtering:
+➤ Filter based on execution trace rather than on input
+REFERENCES
+[1] Jingfei Kong, Cliff C. Zou and Huiyang Zhou, Improving Software
+Security via Runtime Instruction-Level Taint Checking
+[2] Anh Nguyen-Tuong, Salvatore Guarnieri, Doug Greene, Jeff Shirley,
+David Evans, Automatically Hardening Web Applications Using Precise
+Tainting, InfoSec 2005.
+[3] Sting: An End-to-End Self-healing System for Defending against Zero-day
+Worm Attacks. CMU-CS-05-191
+[4] James Newsome, David Brumley, and Dawn Song. VulnerabilitySpecific Execution Filtering for Exploit Prevention on Commodity Software.
+In Proceedings of the 13th Annual Network and Distributed System
+Security Symposium (NDSS '06), February 2006
+47
