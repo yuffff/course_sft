@@ -13,17 +13,17 @@
             two types of sensor 
             environment changes ( all the things in a form ) ok
         3. antipattern ok
-            cascading failure and how to fix it 
+            cascading failure and how to fix it  -xxx
             chain reaction how to fix it 
-        4. bugs as deviant behavior ok
-            explain must beliefs may beliefs 
+        4. bugs as deviant behavior ok 
+            explain must beliefs may beliefs  -xxx
             analyse a short of code
                 free?lock?
-                check-then-use/use-then-check?
+                check-then-use/use-then-check? -xxx
         5. tainted data ok
             static/dynamic 
             coarse grain tainted / precise tainted 
-            sting the architecture/signature/ polymorphism 
+            sting the architecture/signature/ polymorphism *paper ext
         不用写伪代码...
     from slides 
         ppt-1--introduction and roughly what is fault, classes of fault
@@ -31,18 +31,18 @@
             what diff from past/before. challenges now ?p7
             what is our approach in general? hhh
             Services need to be? p11
-            defect can be ? p13 -ext
+            types of defect ? p13 -ext
             defect density? normally 
-            typical kinds of defects in linux? p18 
+            typical kinds of defects in linux? p18 pass
             what is INTEGER HANDLING ISSUE,CONTROL FLOW ISSUE? -ext 
-            availability def p32
+            availability def p32 -xxx
             CAUSES OF UNAVAILABILITY [IEEE1995] x3 roughly
             *relationship fault error failure p35
             CHAIN OF DEPENDABILITY THREATS p39 
                 between components
-            what is failure model? p43 
+            what is failure model? p43  -xxx
             what happens when it go beyond failure model?
-            FAULT TYPES? x5 imodified p47 
+            *FAULT TYPES? x5 imodified p47 -xxx
             Why is Software Fault Tolerance important?
             what are Dependability threads? relationship between them 
             which func can be used in c/c++ to allocate mem? -p47 r1
@@ -143,16 +143,31 @@
                 some example to this ? p39 roughly
                 we should not use integers comes from users directly.....
             MUST belief
+                *summ. typical error? 
+                    pointer 
+                        use after free
+                        check then use/ use then check...
+                        os security beliefs at the sametime? 
+                    variables
+                        uninitialized
+                        redundancy...
+                        unused
+                    buffer 
+                        size overflow 
+                    heap stack 
+                        overflow 
                 FIND ERRORS WITHOUT KNOWING TRUTH? x2 p50 
+                    summ. method used for must believe and may 
                 *MUST beliefs and may, what are they? give examples p52 p56 exerp38 
                 how to use those beliefs?
                 what are must beliefs in this code ? p51 
-                ?? p58 may or must? 
+                ?? p58 may or must? !! -ext
                 p60 61 later template used to drive must beliefs
                 check(p==NULL) can drive 2 MUST beli? three typies of traditional contraditons? p65 66 73
                 how to do redundancy checking, useless? examples  p75 78 
                 FINDING SECURITY HOLES, how? example  p81 
                 how to do belief analysis? roughly, general
+                if one thing in two sys. imp has two beliefs, there is a contraditons? 
                 when there are multiple implementations ? p85
                 cross-check for contradictions...
             MAY belief
@@ -160,12 +175,13 @@
                 why use z-rank to rank 'errors'? some are real error, others are false positives
                     and how?  
                 why there may be problems with free() function? p95 
-                z-rank example with foo and bar function? which is err? p96 概率
-                *free error?example p97 
+                *z-rank example with foo and bar function? which is err? p96 概率 p91 
+                    a ranking formula? compare foo and bar ? is foo< bar err? 
+                *free error?similar to last one. example p99 i wrote  
                 an other way to rank snippets that we found? p103 
                     heuristic? see how often?...
-                an other example, use in subfunction! worst bug case? short explain p108
-            check “A() MAY BE FOLLOWED BY B()” Rule? p110 algo x3 
+                an other example, use in subfunction! worst bug case? short explain p108 ??
+            check “A() MAY BE FOLLOWED BY B()” Rule? p110 algo x3 p91 
             the key idea of 'code beliefs'? -ans
             what to use for static analysis? template? algo? p113 
         ppt-5--approach4 'totally random'

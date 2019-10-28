@@ -1,5 +1,53 @@
 
     //
+        exam ext paper 
+            s4!
+            http://users.ece.cmu.edu/~dawnsong/papers/sig-gen-oakland06.pdf
+                *A vulnerability signature matches all exploits of a given vulnerability
+                A vulnerability signature is a representation (e.g., a regular
+                expression) of the vulnerability language
+
+                A vulnerability is a type of bug that can be used by an
+                attacker to alter the intended operation of the software in a
+                malicious way
+
+                An exploit is an actual input that triggers a
+                software vulnerability
+
+                One of the most popular and effective exploit defense mechanisms is signature-based input
+                filtering
+
+                Thus, any improvements in signature generation will likely have
+                widespread impact.
+
+                We need automatic signature generation techniques
+                because manual signature generation is slow and error
+                prone.
+
+                worm outbreak
+
+                Automatic
+                techniques have the potential to be more accurate than manual efforts because vulnerabilities tend to be complex and
+                require intricate knowledge of details such as realizable program paths and corner conditions.
+
+                the complexities of a vulnerability 
+
+                ymorphic exploit variants that can trigger a software vulnerabil
+
+                an
+                exploit could use different assembly instructions that have
+                the same effect
+
+                the vulnerability uncovered by a new exploit attack instead of analyzing the exploit
+
+                At a high level, our main contribution
+                is a new class of signature
+
+                an unsafe execution state
+
+                satisfy a
+                vulnerability condition in the program.
+
         课程场景：
             航天项目，要求软件系统高度可靠
             手术机器人
