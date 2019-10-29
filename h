@@ -49,14 +49,14 @@
             RX:
                 Treating Bugs As Allergies 
                 过敏？换个环境执行！！
-    summ.
+    summ. -xxx
         what are typical faults? s1p18 r3
         how can we gen. test cases? x5 s1p15 r3
         what can we do to increase likelihood to detect bugs? when doing random testing 
         solution to test overflow? s1p45 x1
         quick random test cases? p46 
-        white box cov. methods? x3x3 
-        how to test a program?(black box testing)
+        white box cov. methods? x3x3  
+        how to test a program?(black box testing) 
         the goal of symbolic Execution? -ext
         key idea of SE? -ext 
         key odea of intension check  s4p3
@@ -73,6 +73,6 @@
         ...
     inverse
         //what can we use toxxx 
-        to increase online robustness? x4big s8p2 partII of the course 
-        given a code, how to test it? unit test? checking? partI of the slide
+        to increase online robustness? x4big s8p2 partII of the course -xxx 
+        given a code, how to test it? unit test? checking? partI of the slide -xxx
         classify the kind of software faults of existing programs

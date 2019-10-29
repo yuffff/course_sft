@@ -12,10 +12,10 @@
         
         ...
     coding 
-        black box test func.怎么写
-        SAT-Solver? SMT solver? !!!
+        black box test func.怎么写 -xxx
+        SAT-Solver? SMT solver? !!! -xxx
             z3,stp...
-        OpenSSL, MatrixSSL, Botan and GnuTLS  attack
-        https://github.com/RUB-NDS/TLS-Attacker
-        https://github.com/DynamoRIO/dynamorio
-        inject attack code
+        OpenSSL, MatrixSSL, Botan and GnuTLS  attack -xxx
+        https://github.com/RUB-NDS/TLS-Attacker -xxx
+        https://github.com/DynamoRIO/dynamorio -xxx
+        inject attack code -xxx

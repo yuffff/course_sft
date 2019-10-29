@@ -221,7 +221,7 @@
                 of Microsoft SQL Server Resolution Service listening on UDP port 1434
             Home PCs are generally not vulnerable to this worm unless they have MSDE installed
             it only stays in memory, and it is easy to remove
-        Valgrind 
+        Valgrind -xxx
             is an instrumentation framework for building dynamic analysis tools. 
                 There are Valgrind tools that can automatically detect many memory management 
                 and threading bugs
@@ -235,7 +235,7 @@
         Our expectation is that FIG will be used for software development and verification
         develop software with a higher degree of failure recoverability
         Fault injection, recovery-oriented computing
-        glibc是linux下面c标准库的实现，即GNU C Library
+        glibc是linux下面c标准库的实现，即GNU C Library -xxx
         The highly complex and dynamic nature
         build adaptive, self-managing capabilities into next-generation 
             business network and Internet applications 
@@ -272,6 +272,13 @@
                 then increasing the richness of the user experience step by step by testing 
                     for support for enhancements before applying them
                 Progressive enhancement is similar, but it does things the other way round
+            +
+                phy 
+                    ...
+                logical 
+                degradation 
+                reboot
+                    ...
 
     ppt-9
         antipattern

@@ -145,10 +145,11 @@
                         uninitialized
                         redundancy...
                         unused
-                    buffer 
-                        size overflow 
-                    heap stack 
-                        overflow 
+                    mem
+                        buffer 
+                            size overflow 
+                        heap stack 
+                            overflow 
                 FIND ERRORS WITHOUT KNOWING TRUTH? x2 p50 
                     summ. method used for must believe and may 
                 *MUST beliefs and may, what are they? give examples p52 p56 exerp38 
